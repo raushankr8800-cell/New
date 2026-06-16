@@ -87,6 +87,13 @@ if ($state_info && empty($seo_desc)) {
     update_post_meta($post_id, '_ust_seo_desc', $seo_desc);
 }
 
+// One-time SEO upgrade to V6 varied titles/descriptions (per-state).
+if ($state_info && function_exists('usc_seo_title_v6') && get_post_meta($post_id, '_ust_seo_v6', true) !== '1') {
+    update_post_meta($post_id, '_ust_seo_title', usc_seo_title_v6($calc_type, $state_info['name']));
+    update_post_meta($post_id, '_ust_seo_desc', usc_seo_desc_v6($calc_type, $state_info));
+    update_post_meta($post_id, '_ust_seo_v6', '1');
+}
+
 $post_content = get_post_field('post_content', $post_id);
 $ust_outdated = empty($post_content);
 // Income Tax pages upgrade to the V6 content engine.

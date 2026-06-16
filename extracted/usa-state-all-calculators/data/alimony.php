@@ -1415,6 +1415,9 @@ function usc_get_default_alimony_faqs($state) {
  * Returns dynamic SEO Title for alimony calculators
  */
 function usc_get_default_alimony_seo_title($state_name) {
+    if (function_exists('usc_seo_title_v6')) {
+        return usc_seo_title_v6('alimony', $state_name);
+    }
     return $state_name . ' Alimony Calculator: Estimate Spousal Support';
 }
 
@@ -1422,6 +1425,9 @@ function usc_get_default_alimony_seo_title($state_name) {
  * Returns dynamic SEO Description for alimony calculators
  */
 function usc_get_default_alimony_seo_desc($state) {
+    if (function_exists('usc_seo_desc_v6')) {
+        return usc_seo_desc_v6('alimony', $state);
+    }
     return 'Calculate spousal support and duration in ' . $state['name'] . ' using our free spousal maintenance calculator. Factors in spousal incomes, marriage duration, children, and state guidelines.';
 }
 

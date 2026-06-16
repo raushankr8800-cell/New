@@ -1627,6 +1627,9 @@ function usc_get_default_mortgage_faqs($state) {
  * Returns default SEO title for Mortgage Calculator
  */
 function usc_get_default_mortgage_seo_title($state_name) {
+    if (function_exists('usc_seo_title_v6')) {
+        return usc_seo_title_v6('mortgage', $state_name);
+    }
     return $state_name . ' Mortgage Calculator | Monthly PITI Payment Estimates';
 }
 
@@ -1634,6 +1637,9 @@ function usc_get_default_mortgage_seo_title($state_name) {
  * Returns default SEO description for Mortgage Calculator
  */
 function usc_get_default_mortgage_seo_desc($state) {
+    if (function_exists('usc_seo_desc_v6')) {
+        return usc_seo_desc_v6('mortgage', $state);
+    }
     return 'Calculate your monthly mortgage payment (PITI) in ' . $state['name'] . ' with our free advanced calculator. Simulates extra payments payoff and closing costs.';
 }
 

@@ -38,6 +38,7 @@ require_once USC_PATH . 'includes/class-usc-metaboxes.php';
 require_once USC_PATH . 'includes/class-usc-seo.php';
 require_once USC_PATH . 'data/usc-default-content.php';
 require_once USC_PATH . 'data/usc-state-extra.php';
+require_once USC_PATH . 'data/usc-seo-v6.php';
 require_once USC_PATH . 'data/usc-paycheck-v6.php';
 require_once USC_PATH . 'data/usc-childsupport-v6.php';
 require_once USC_PATH . 'data/usc-alimony-v6.php';
@@ -1235,8 +1236,8 @@ function ust_auto_generate_state_pages() {
             if (!is_wp_error($post_id)) {
                 update_post_meta($post_id, '_ust_calc_type', 'income-tax');
                 update_post_meta($post_id, '_ust_state_slug', $slug);
-                update_post_meta($post_id, '_ust_seo_title', sprintf(__('%s Income Tax Calculator - Calfy', 'usa-state-all-calculators'), $state['name']));
-                update_post_meta($post_id, '_ust_seo_desc', sprintf(__('Estimate your annual take-home salary, federal income taxes, FICA withholdings, and %s state tax brackets using our free income tax calculator.', 'usa-state-all-calculators'), $state['name']));
+                update_post_meta($post_id, '_ust_seo_title', usc_seo_title_v6('income-tax', $state['name']));
+                update_post_meta($post_id, '_ust_seo_desc', usc_seo_desc_v6('income-tax', $state));
                 $defaults = ust_get_default_templates('income-tax', $slug);
                 update_post_meta($post_id, '_ust_calc_html', $defaults['html']);
                 update_post_meta($post_id, '_ust_calc_css', $defaults['css']);
@@ -1278,8 +1279,8 @@ function ust_auto_generate_state_pages() {
             if (!is_wp_error($post_id)) {
                 update_post_meta($post_id, '_ust_calc_type', 'property-tax');
                 update_post_meta($post_id, '_ust_state_slug', $slug);
-                update_post_meta($post_id, '_ust_seo_title', sprintf(__('%s Property Tax Calculator - Calfy', 'usa-state-all-calculators'), $state['name']));
-                update_post_meta($post_id, '_ust_seo_desc', sprintf(__('Calculate your monthly and annual property taxes in %s. Select your county, apply senior/homestead exemptions, and view 5-year projections.', 'usa-state-all-calculators'), $state['name']));
+                update_post_meta($post_id, '_ust_seo_title', usc_seo_title_v6('property-tax', $state['name']));
+                update_post_meta($post_id, '_ust_seo_desc', usc_seo_desc_v6('property-tax', $state));
                 $defaults = ust_get_default_templates('property-tax', $slug);
                 update_post_meta($post_id, '_ust_calc_html', $defaults['html']);
                 update_post_meta($post_id, '_ust_calc_css', $defaults['css']);
@@ -1321,8 +1322,8 @@ function ust_auto_generate_state_pages() {
             if (!is_wp_error($post_id)) {
                 update_post_meta($post_id, '_ust_calc_type', 'sales-tax');
                 update_post_meta($post_id, '_ust_state_slug', $slug);
-                update_post_meta($post_id, '_ust_seo_title', sprintf(__('%s Sales Tax Calculator - Calfy', 'usa-state-all-calculators'), $state['name']));
-                update_post_meta($post_id, '_ust_seo_desc', sprintf(__('Calculate the combined state and local sales tax for purchases in %s. Apply tax-exempt status for groceries or medicine and view benchmarking costs.', 'usa-state-all-calculators'), $state['name']));
+                update_post_meta($post_id, '_ust_seo_title', usc_seo_title_v6('sales-tax', $state['name']));
+                update_post_meta($post_id, '_ust_seo_desc', usc_seo_desc_v6('sales-tax', $state));
                 $defaults = ust_get_default_templates('sales-tax', $slug);
                 update_post_meta($post_id, '_ust_calc_html', $defaults['html']);
                 update_post_meta($post_id, '_ust_calc_css', $defaults['css']);

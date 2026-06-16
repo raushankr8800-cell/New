@@ -801,6 +801,9 @@ function usc_get_default_child_support_faqs($state) {
  * Returns dynamic SEO Title for calculators
  */
 function usc_get_default_seo_title($calc_type, $state_name) {
+    if (function_exists('usc_seo_title_v6')) {
+        return usc_seo_title_v6($calc_type, $state_name);
+    }
     if ($calc_type === 'paycheck') {
         return $state_name . ' Paycheck Calculator: Calculate Take-Home Pay';
     } else {
@@ -812,6 +815,9 @@ function usc_get_default_seo_title($calc_type, $state_name) {
  * Returns dynamic SEO Description for calculators
  */
 function usc_get_default_seo_desc($calc_type, $state) {
+    if (function_exists('usc_seo_desc_v6')) {
+        return usc_seo_desc_v6($calc_type, $state);
+    }
     $name = $state['name'];
     if ($calc_type === 'paycheck') {
         $tax_desc = ($state['tax_type'] === 'none') ? 'no state income tax' : $state['tax_desc'];

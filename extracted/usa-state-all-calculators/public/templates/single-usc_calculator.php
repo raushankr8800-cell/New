@@ -85,6 +85,21 @@ if ($state_info && (empty($seo_desc) || strpos($seo_desc, 'federal, state, FICA,
     update_post_meta($post_id, '_usc_seo_desc', $new_seo_desc);
 }
 
+// One-time SEO upgrade to V6 varied titles/descriptions (per-state).
+if ($state_info && function_exists('usc_seo_title_v6') && get_post_meta($post_id, '_usc_seo_v6', true) !== '1') {
+    if ($calc_type === 'alimony') {
+        update_post_meta($post_id, '_usc_seo_title', usc_get_default_alimony_seo_title($state_info['name']));
+        update_post_meta($post_id, '_usc_seo_desc', usc_get_default_alimony_seo_desc($state_info));
+    } elseif ($calc_type === 'mortgage') {
+        update_post_meta($post_id, '_usc_seo_title', usc_get_default_mortgage_seo_title($state_info['name']));
+        update_post_meta($post_id, '_usc_seo_desc', usc_get_default_mortgage_seo_desc($state_info));
+    } else {
+        update_post_meta($post_id, '_usc_seo_title', usc_get_default_seo_title($calc_type, $state_info['name']));
+        update_post_meta($post_id, '_usc_seo_desc', usc_get_default_seo_desc($calc_type, $state_info));
+    }
+    update_post_meta($post_id, '_usc_seo_v6', '1');
+}
+
 $post_content   = get_post_field('post_content', $post_id);
 $content_outdated = false;
 if (empty($post_content) || strpos($post_content, '<!-- usc-v5-article -->') === false || strpos($post_content, '<h2>13. Frequently Asked Questions') !== false) {
