@@ -56,6 +56,7 @@ require_once UST_PATH . 'data/sales-tax.php';
 require_once UST_PATH . 'data/other-tax.php';
 require_once UST_PATH . 'data/cost-of-living.php';
 require_once UST_PATH . 'data/ust-default-content.php';
+require_once UST_PATH . 'data/usc-incometax-v6.php';
 require_once UST_PATH . 'data/ust-default-templates.php';
 
 // ============================================================
@@ -1250,7 +1251,7 @@ function ust_auto_generate_state_pages() {
             $post_status = get_post_status($post_id);
             if ($post_status === 'trash' || $post_status === 'draft') wp_update_post(['ID' => $post_id, 'post_status' => 'publish']);
             $post_content = $income_exists->post_content;
-            if (empty($post_content) || strpos($post_content, '<!-- ust-v12-article -->') === false) {
+            if (empty($post_content) || strpos($post_content, '<!-- ust-v12-article -->') === false || strpos($post_content, '<!-- ust-income-v6 -->') === false) {
                 wp_update_post(['ID' => $post_id, 'post_content' => ust_get_income_tax_default_content($state) . '<!-- ust-v12-article -->']);
                 update_post_meta($post_id, '_ust_faqs', ust_get_income_tax_faqs($state));
             }

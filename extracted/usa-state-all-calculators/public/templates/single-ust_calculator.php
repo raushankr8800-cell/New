@@ -88,9 +88,15 @@ if ($state_info && empty($seo_desc)) {
 }
 
 $post_content = get_post_field('post_content', $post_id);
-if ($state_info && empty($post_content)) {
+$ust_outdated = empty($post_content);
+// Income Tax pages upgrade to the V6 content engine.
+if ($calc_type === 'income-tax' && strpos($post_content, '<!-- ust-income-v6 -->') === false) {
+    $ust_outdated = true;
+}
+if ($state_info && $ust_outdated) {
     if ($calc_type === 'income-tax') {
         $new_content = ust_get_income_tax_default_content($state_info);
+        update_post_meta($post_id, '_ust_faqs', ust_get_income_tax_faqs($state_info));
     } elseif ($calc_type === 'property-tax') {
         $new_content = ust_get_property_tax_default_content($state_info);
     } else {

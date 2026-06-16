@@ -307,6 +307,9 @@ function ust_get_sales_tax_variations() {
  * Generates dynamic SEO article content for the Income Tax Calculator
  */
 function ust_get_income_tax_default_content($state) {
+    if (function_exists('usc_it_article_v6')) {
+        return usc_it_article_v6($state);
+    }
     $name = $state['name'];
     $desc = $state['tax_desc'];
     $type = $state['tax_type'];
@@ -504,6 +507,9 @@ function ust_get_sales_tax_default_content($state) {
  * Returns dynamic FAQs for Income Tax
  */
 function ust_get_income_tax_faqs($state) {
+    if (function_exists('usc_it_faqs_v6')) {
+        return usc_it_faqs_v6($state);
+    }
     $name = $state['name'];
     $state_slug = strtolower(str_replace(' ', '-', $name));
     $faq_pool = [
