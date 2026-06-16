@@ -94,6 +94,10 @@ if (empty($post_content) || strpos($post_content, '<!-- usc-v5-article -->') ===
 if ($calc_type === 'paycheck' && strpos($post_content, '<!-- usc-paycheck-v6 -->') === false) {
     $content_outdated = true;
 }
+// Child Support pages upgrade to the V6 content engine.
+if ($calc_type === 'child-support' && strpos($post_content, '<!-- usc-cs-v6 -->') === false) {
+    $content_outdated = true;
+}
 if ($state_info && $content_outdated) {
     if ($calc_type === 'paycheck') {
         $new_content = usc_get_default_paycheck_article_content($state_info);
@@ -105,9 +109,11 @@ if ($state_info && $content_outdated) {
         $new_content = usc_get_default_child_support_article_content($state_info);
     }
     wp_update_post(['ID' => $post_id, 'post_content' => $new_content]);
-    // Refresh paycheck FAQs alongside the upgraded article.
+    // Refresh FAQs alongside the upgraded article.
     if ($calc_type === 'paycheck') {
         update_post_meta($post_id, '_usc_faqs', usc_get_default_paycheck_faqs($state_info));
+    } elseif ($calc_type === 'child-support') {
+        update_post_meta($post_id, '_usc_faqs', usc_get_default_child_support_faqs($state_info));
     }
 }
 

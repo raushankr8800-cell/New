@@ -474,6 +474,9 @@ function usc_get_default_paycheck_article_content($state) {
  * Generates dynamic SEO article content for the Child Support Calculator
  */
 function usc_get_default_child_support_article_content($state) {
+    if (function_exists('usc_cs_article_v6')) {
+        return usc_cs_article_v6($state);
+    }
     $name = $state['name'];
     $model = $state['cs_model'];
     $state_slug = strtolower(str_replace(' ', '-', $name));
@@ -711,6 +714,9 @@ function usc_get_default_paycheck_faqs($state) {
  * Returns 10 detailed FAQs for Child Support Calculator
  */
 function usc_get_default_child_support_faqs($state) {
+    if (function_exists('usc_cs_faqs_v6')) {
+        return usc_cs_faqs_v6($state);
+    }
     $name = $state['name'];
     $model = $state['cs_model'];
     $state_slug = strtolower(str_replace(' ', '-', $name));

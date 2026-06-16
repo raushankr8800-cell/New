@@ -39,6 +39,7 @@ require_once USC_PATH . 'includes/class-usc-seo.php';
 require_once USC_PATH . 'data/usc-default-content.php';
 require_once USC_PATH . 'data/usc-state-extra.php';
 require_once USC_PATH . 'data/usc-paycheck-v6.php';
+require_once USC_PATH . 'data/usc-childsupport-v6.php';
 require_once USC_PATH . 'data/usc-default-templates.php';
 require_once USC_PATH . 'data/alimony.php';
 require_once USC_PATH . 'data/mortgage.php';
@@ -1103,7 +1104,7 @@ function usc_auto_generate_state_pages() {
             $post_status = get_post_status($post_id);
             if ($post_status === 'trash' || $post_status === 'draft') wp_update_post(['ID' => $post_id, 'post_status' => 'publish']);
             $post_content = $cs_exists->post_content;
-            if (empty($post_content) || strpos($post_content, '<!-- usc-v5-article -->') === false || strpos($post_content, '<h2>13. Frequently Asked Questions') !== false) {
+            if (empty($post_content) || strpos($post_content, '<!-- usc-v5-article -->') === false || strpos($post_content, '<h2>13. Frequently Asked Questions') !== false || strpos($post_content, '<!-- usc-cs-v6 -->') === false) {
                 wp_update_post(['ID' => $post_id, 'post_content' => usc_get_default_child_support_article_content($state)]);
                 update_post_meta($post_id, '_usc_faqs', usc_get_default_child_support_faqs($state));
             }
