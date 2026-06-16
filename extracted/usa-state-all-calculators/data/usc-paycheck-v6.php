@@ -14,6 +14,32 @@
 if (!defined('ABSPATH')) exit;
 
 /**
+ * Picks a heading phrasing deterministically per state, so the same section
+ * does not carry an identical <h2> on all 50 pages.
+ */
+function usc_pv6_h($slug, $key, $variants) {
+    return $variants[usc_get_variation_index($slug, 'head_' . $key, count($variants))];
+}
+
+/**
+ * Deterministically shuffles a bullet pool by state and returns $count items
+ * wrapped in <ul>/<ol>. Different states therefore show a different subset and
+ * order of bullets, cutting list duplication across pages.
+ */
+function usc_pv6_list($slug, $key, $items, $count, $tag = 'ul') {
+    usort($items, function($a, $b) use ($slug, $key) {
+        return strcmp(md5($slug . '|' . $key . '|' . $a), md5($slug . '|' . $key . '|' . $b));
+    });
+    $items = array_slice($items, 0, $count);
+    $li = '';
+    foreach ($items as $it) {
+        $li .= '<li>' . $it . '</li>';
+    }
+    return '<' . $tag . '>' . $li . '</' . $tag . '>';
+}
+
+
+/**
  * Returns the Paycheck text variations (15+ per section).
  * Tokens: {state_name} {city1} {city2} {region} {state_tax_para}
  */
@@ -293,13 +319,16 @@ function usc_paycheck_article_v6($state) {
     $city2 = isset($x['cities'][1]) ? $x['cities'][1] : $x['cities'][0];
 
     // State-tax explanatory paragraph (kept accurate per tax type).
+    // Short, parenthetical-friendly state-tax clause for the "factors" section,
+    // with 2 phrasings per tax type selected deterministically per state.
     if ($type === 'none') {
-        $state_tax_para = $name . ' does not levy a state income tax on earned wages, which means your take-home pay is noticeably higher than in states with steep brackets. The only mandatory withholding from your check is federal income tax, FICA, and any local city or county tax that applies where you live.';
+        $stp = [$name . ' levies no state income tax on wages', 'there is no ' . $name . ' state wage tax to withhold'];
     } elseif ($type === 'flat') {
-        $state_tax_para = $name . ' uses a flat income tax, a ' . $desc . ' applied to your taxable state wages. Unlike a progressive system, the same percentage applies whether you earn a little or a lot, which keeps the state portion of your paycheck simple to predict.';
+        $stp = [$name . ' uses a ' . $desc, $name . '\'s ' . $desc . ' applies to all taxable wages'];
     } else {
-        $state_tax_para = $name . ' runs a progressive income tax, with rates that climb as your income moves through brackets up to ' . $desc . '. Your filing status and state deductions determine which rates apply to each slice of your wages.';
+        $stp = [$name . ' uses ' . $desc, $name . ' applies ' . $desc . ' across its brackets'];
     }
+    $state_tax_para = $stp[usc_get_variation_index($state_slug, 'stp', count($stp))];
 
     if ($type === 'none') {
         $desc_sentence = $name . ' charges no state income tax on wages, so only federal tax and FICA come out of your check.';
@@ -338,23 +367,26 @@ function usc_paycheck_article_v6($state) {
         return usc_get_section_content($state_slug, $key, $pool, $replacements);
     };
 
-    $html = '<h2>1. Introduction</h2>
+    $html = '<h2>1. ' . usc_pv6_h($state_slug, 'intro', ['Introduction', 'Getting Started', 'Overview', 'Your ' . $name . ' Paycheck, Explained']) . '</h2>
 <p>' . $sec('intro') . '</p>
 
-<h2>2. What is a ' . $name . ' Paycheck Calculator?</h2>
+<h2>2. ' . usc_pv6_h($state_slug, 'whatis', ['What is a ' . $name . ' Paycheck Calculator?', 'What This ' . $name . ' Calculator Does', 'Meet the ' . $name . ' Paycheck Calculator', 'What Exactly Is This Tool?']) . '</h2>
 <p>' . $sec('whatis') . '</p>
 
-<h2>3. Why Use This Calculator?</h2>
+<h2>3. ' . usc_pv6_h($state_slug, 'why', ['Why Use This Calculator?', 'Why This Tool Is Worth Your Time', 'Reasons to Run Your Numbers First', 'Why Bother Estimating Your Check?']) . '</h2>
 <p>' . $sec('why') . '</p>
-<ul>
-    <li><strong>Prevent Tax Surprises:</strong> Estimating your withholding through the year keeps you from underpaying and facing an IRS penalty or a shock bill in April.</li>
-    <li><strong>Optimize Your W-4:</strong> Run what-if scenarios to see how filing status, dependent credits, or extra withholding change your ' . $name . ' take-home pay.</li>
-    <li><strong>Evaluate Job Offers:</strong> Compare offers in ' . $city1 . ' and beyond by their real net pay, not just the headline gross salary.</li>
-    <li><strong>Budget With Confidence:</strong> Get precise per-period cash flow to schedule rent, loans, and savings.</li>
-    <li><strong>See Deduction Impact:</strong> Watch how a bigger 401(k) or HSA contribution lowers your tax while reshaping your check.</li>
-</ul>
+' . usc_pv6_list($state_slug, 'why', [
+    '<strong>Prevent Tax Surprises:</strong> Estimating your withholding through the year keeps you from underpaying and facing an IRS penalty or a shock bill in April.',
+    '<strong>Optimize Your W-4:</strong> Run what-if scenarios to see how filing status, dependent credits, or extra withholding change your ' . $name . ' take-home pay.',
+    '<strong>Evaluate Job Offers:</strong> Compare offers in ' . $city1 . ' and beyond by their real net pay, not just the headline gross salary.',
+    '<strong>Budget With Confidence:</strong> Get precise per-period cash flow to schedule rent, loans, and savings.',
+    '<strong>See Deduction Impact:</strong> Watch how a bigger 401(k) or HSA contribution lowers your tax while reshaping your check.',
+    '<strong>Plan a Move:</strong> Weigh a relocation within ' . $x['region'] . ' by comparing real after-tax pay, not just salary.',
+    '<strong>Time a Raise or Bonus:</strong> See how much of a pay bump actually survives taxes before you mentally spend it.',
+    '<strong>Avoid Withholding Drift:</strong> Catch an over- or under-withheld W-4 early, so each ' . $name . ' check lands where you expect.',
+], 5) . '
 
-<h2>4. How Does the ' . $name . ' Paycheck Calculator Work?</h2>
+<h2>4. ' . usc_pv6_h($state_slug, 'how', ['How Does the ' . $name . ' Paycheck Calculator Work?', 'How the ' . $name . ' Calculator Crunches Your Pay', 'What Happens Behind the Scenes', 'How Your Gross Pay Becomes Net Pay']) . '</h2>
 <p>' . $sec('how') . '</p>
 <ol>
     <li><strong>Gross Earnings:</strong> Computes your gross pay for the period from your salary or hourly rate and hours worked.</li>
@@ -366,29 +398,31 @@ function usc_paycheck_article_v6($state) {
     <li><strong>Post-Tax Deductions:</strong> Removes Roth contributions, union dues, or garnishments to reach net pay.</li>
 </ol>
 
-<h2>5. Inputs Required</h2>
+<h2>5. ' . usc_pv6_h($state_slug, 'inputs', ['Inputs Required', 'What You Will Need', 'Information to Have Ready', 'What to Enter']) . '</h2>
 <p>' . $sec('inputs') . '</p>
-<ul>
-    <li><strong>Gross Pay / Hourly Rate:</strong> Your salary before taxes or your hourly wage, plus bonuses or commissions.</li>
-    <li><strong>Pay Frequency:</strong> Weekly, bi-weekly, semi-monthly, monthly, or annually, this sets the bracket math.</li>
-    <li><strong>Filing Status:</strong> Single, Married Filing Jointly, Married Filing Separately, or Head of Household.</li>
-    <li><strong>W-4 Settings:</strong> Dependent credits, other income, deductions, or extra withholding.</li>
-    <li><strong>Pre-Tax Deductions:</strong> 401(k)/403(b), health, dental, vision, or HSA/FSA.</li>
-    <li><strong>Post-Tax Deductions:</strong> Roth contributions, life insurance, union dues, or garnishments.</li>
-    <li><strong>State &amp; Local Details:</strong> Any ' . $name . ' local jurisdiction or county tax that applies.</li>
-</ul>
+' . usc_pv6_list($state_slug, 'inputs', [
+    '<strong>Gross Pay / Hourly Rate:</strong> Your salary before taxes or your hourly wage, plus bonuses or commissions.',
+    '<strong>Pay Frequency:</strong> Weekly, bi-weekly, semi-monthly, monthly, or annually, this sets the bracket math.',
+    '<strong>Filing Status:</strong> Single, Married Filing Jointly, Married Filing Separately, or Head of Household.',
+    '<strong>W-4 Settings:</strong> Dependent credits, other income, deductions, or extra withholding.',
+    '<strong>Pre-Tax Deductions:</strong> 401(k)/403(b), health, dental, vision, or HSA/FSA.',
+    '<strong>Post-Tax Deductions:</strong> Roth contributions, life insurance, union dues, or garnishments.',
+    '<strong>State &amp; Local Details:</strong> Any ' . $name . ' local jurisdiction or county tax that applies.',
+    '<strong>Dependents:</strong> The number of qualifying children or dependents claimed on your W-4.',
+    '<strong>Additional Income:</strong> Side earnings or a second job you want reflected in withholding.',
+], 7) . '
 
-<h2>6. Formula Used</h2>
+<h2>6. ' . usc_pv6_h($state_slug, 'formula', ['Formula Used', 'The Math Behind It', 'How the Numbers Are Calculated', 'The Net-Pay Equation']) . '</h2>
 <p>' . $sec('formula') . '</p>
 <pre style="background:#f4f4f5; padding:15px; border-radius:5px; overflow-x:auto;">Net Pay = Gross Pay - Pre-Tax Deductions - Federal Withholding - FICA - State Tax - Local Tax - Post-Tax Deductions</pre>
 <p>Where:</p>
-<ul>
-    <li><strong>FICA</strong> = 6.2% Social Security (up to the annual wage base) + 1.45% Medicare.</li>
-    <li><strong>Federal Taxable Base</strong> = Gross Pay - Pre-Tax Deductions.</li>
-    <li><strong>State Taxable Base</strong> = Gross Pay - Pre-Tax Deductions - ' . $name . ' exemptions/allowances.</li>
-</ul>
+' . usc_pv6_list($state_slug, 'formuladefs', [
+    '<strong>FICA</strong> = 6.2% Social Security (up to the annual wage base) + 1.45% Medicare.',
+    '<strong>Federal Taxable Base</strong> = Gross Pay - Pre-Tax Deductions.',
+    '<strong>State Taxable Base</strong> = Gross Pay - Pre-Tax Deductions - ' . $name . ' exemptions/allowances.',
+], 3) . '
 
-<h2>7. How to Use the Calculator</h2>
+<h2>7. ' . usc_pv6_h($state_slug, 'howtouse', ['How to Use the Calculator', 'Step-by-Step Instructions', 'Using the Tool in 60 Seconds', 'How to Run Your Estimate']) . '</h2>
 <p>' . $sec('howtouse') . '</p>
 <ol>
     <li>Enter your gross wages or hourly rate in the earnings field.</li>
@@ -399,7 +433,7 @@ function usc_paycheck_article_v6($state) {
     <li>Click Calculate to see your take-home breakdown with charts.</li>
 </ol>
 
-<h2>8. Example Calculation for ' . $name . '</h2>
+<h2>8. ' . usc_pv6_h($state_slug, 'example', ['Example Calculation for ' . $name, 'A Worked ' . $name . ' Example', 'See It in Action: ' . $name, $name . ' Take-Home: A Sample Run']) . '</h2>
 <p>' . $sec('example') . '</p>
 <table style="width:100%; border-collapse: collapse; margin-bottom: 25px; font-size:14px; border: 1px solid #e5e7eb;">
     <thead>
@@ -438,28 +472,28 @@ function usc_paycheck_article_v6($state) {
 </table>
 <p><em>That works out to roughly ' . usc_money($ex['net_year']) . ' a year in take-home pay on an $85,000 salary in ' . $name . '. These figures are estimates for illustration; your real check depends on your exact W-4, benefits, and any local taxes.</em></p>
 
-<h2>9. Factors Affecting Results</h2>
+<h2>9. ' . usc_pv6_h($state_slug, 'factors', ['Factors Affecting Results', 'What Changes Your Take-Home Pay', 'Variables That Move the Number', 'What Influences Your Net Pay']) . '</h2>
 <p>' . $sec('factors') . '</p>
 
-<h2>10. Benefits of Using This Calculator</h2>
+<h2>10. ' . usc_pv6_h($state_slug, 'benefits', ['Benefits of Using This Calculator', 'Why This Tool Helps', 'What You Gain From It', 'The Advantages at a Glance']) . '</h2>
 <p>' . $sec('benefits') . '</p>
 
-<h2>11. Common Mistakes to Avoid</h2>
+<h2>11. ' . usc_pv6_h($state_slug, 'mistakes', ['Common Mistakes to Avoid', 'Pitfalls That Skew Your Estimate', 'Errors People Often Make', 'What Throws Off the Numbers']) . '</h2>
 <p>' . $sec('mistakes') . '</p>
 
-<h2>12. Practical Use Cases</h2>
+<h2>12. ' . usc_pv6_h($state_slug, 'usecases', ['Practical Use Cases', 'Real-World Scenarios', 'When to Reach for This Tool', 'Everyday Uses']) . '</h2>
 <p>' . $sec('usecases') . '</p>
 
-<h2>13. Key ' . $name . ' Paycheck Numbers for 2026</h2>
+<h2>13. ' . usc_pv6_h($state_slug, 'keynums', ['Key ' . $name . ' Paycheck Numbers for 2026', '2026 Tax Figures That Affect Your ' . $name . ' Check', 'The 2026 Numbers Behind Your Estimate', $name . ' Paycheck: 2026 Rates at a Glance']) . '</h2>
 <p>Tax figures refresh every year, so here are the federal numbers baked into your 2026 estimate, alongside ' . $name . '\'s own rules:</p>
-<ul>
-    <li><strong>Social Security (OASDI):</strong> 6.2% on wages up to the 2026 wage base of <strong>$184,500</strong>.</li>
-    <li><strong>Medicare:</strong> 1.45% on every dollar, plus an extra <strong>0.9%</strong> above $200,000 (single) or $250,000 (married filing jointly).</li>
-    <li><strong>2026 standard deduction:</strong> about <strong>$16,100</strong> (single), <strong>$32,200</strong> (married filing jointly), and <strong>$24,150</strong> (head of household).</li>
-    <li><strong>' . $name . ' state tax:</strong> ' . $desc_sentence . '</li>
-</ul>
+' . usc_pv6_list($state_slug, 'keynums', [
+    '<strong>Social Security (OASDI):</strong> 6.2% on wages up to the 2026 wage base of <strong>$184,500</strong>.',
+    '<strong>Medicare:</strong> 1.45% on every dollar, plus an extra <strong>0.9%</strong> above $200,000 (single) or $250,000 (married filing jointly).',
+    '<strong>2026 standard deduction:</strong> about <strong>$16,100</strong> (single), <strong>$32,200</strong> (married filing jointly), and <strong>$24,150</strong> (head of household).',
+    '<strong>' . $name . ' state tax:</strong> ' . $desc_sentence,
+], 4) . '
 
-<h2>14. Final Thoughts</h2>
+<h2>14. ' . usc_pv6_h($state_slug, 'conclusion', ['Final Thoughts', 'The Bottom Line', 'Wrapping Up', 'Key Takeaways']) . '</h2>
 <p>' . $sec('conclusion') . '</p>
 
 <h2>15. Related ' . $name . ' Calculators</h2>
