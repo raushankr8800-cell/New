@@ -432,7 +432,7 @@ function usc_cs_article_v6($state) {
 <h2>12. ' . usc_pv6_h($state_slug, 'cusecases', ['Practical Use Cases', 'Real-World Scenarios', 'When to Reach for This Tool', 'Everyday Uses']) . '</h2>
 <p>' . $sec('usecases') . '</p>
 
-<h2>13. ' . usc_pv6_h($state_slug, 'cset', ['How ' . $name . ' Sets Child Support in 2025-2026', $name . ' Support Guidelines for 2025-2026', 'The Current ' . $name . ' Approach to Support']) . '</h2>
+<h2>13. ' . usc_pv6_h($state_slug, 'cset', ['How ' . $name . ' Sets Child Support in {tax_year}', $name . ' Support Guidelines for {tax_year}', 'The Current ' . $name . ' Approach to Support']) . '</h2>
 <p>' . $name . ' calculates support under the <strong>' . $model . '</strong>. ' . $model_text . ' States review these guidelines periodically, and judges can deviate for special circumstances, but the core inputs stay the same: each parent\'s income, the number of children, parenting overnights, health insurance, and work-related childcare. Recent updates have mostly nudged the self-support reserve and low-income thresholds upward for inflation, so a current estimate is more reliable than an older one.</p>
 
 <h2>14. ' . usc_pv6_h($state_slug, 'cconclusion', ['Final Thoughts', 'The Bottom Line', 'Wrapping Up', 'Key Takeaways']) . '</h2>
@@ -456,6 +456,7 @@ function usc_cs_article_v6($state) {
 <!-- usc-v5-article -->
 <!-- usc-cs-v6 -->';
 
+    $html = str_replace('{tax_year}', (function_exists('usac_get_active_tax_year') ? usac_get_active_tax_year() : '2026'), $html);
     return $html;
 }
 

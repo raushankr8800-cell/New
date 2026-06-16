@@ -398,7 +398,7 @@ function usc_it_article_v6($state) {
 <p>Before your paycheck reaches your bank, several withholdings come out of gross earnings. Understanding them helps you read your pay stub accurately:</p>
 ' . usc_pv6_list($state_slug, 'itded', [
     '<strong>Federal Income Tax:</strong> progressive rates from 10% to 37%, based on your W-4 and standard deduction.',
-    '<strong>FICA:</strong> 6.2% Social Security (up to the 2026 wage base of $184,500) and 1.45% Medicare on all wages.',
+    '<strong>FICA:</strong> 6.2% Social Security (up to the {tax_year} wage base of $184,500) and 1.45% Medicare on all wages.',
     '<strong>' . esc_html($name) . ' State Income Tax:</strong> applied under ' . esc_html($name) . '\'s own rules.',
     '<strong>Pre-Tax Deductions:</strong> 401(k), HSA/FSA, and some insurance premiums, deducted before taxes.',
     '<strong>Additional Medicare:</strong> an extra 0.9% on wages above $200,000 (single) or $250,000 (married).',
@@ -445,6 +445,7 @@ function usc_it_article_v6($state) {
 </ul>
 <!-- ust-income-v6 -->';
 
+    $html = str_replace('{tax_year}', (function_exists('usac_get_active_tax_year') ? usac_get_active_tax_year() : '2026'), $html);
     return $html;
 }
 
@@ -493,14 +494,14 @@ function usc_it_faqs_v6($state) {
             'Gross minus pre-tax deductions, federal tax, FICA, and ' . $name . ' tax equals your take-home pay.',
         ])],
         ['q' => 'What is FICA and how much is it?', 'a' => $pick('fica', [
-            'FICA is 6.2% Social Security (up to the 2026 wage base of $184,500) plus 1.45% Medicare on all wages, 7.65% total, matched by your employer.',
+            'FICA is 6.2% Social Security (up to the {tax_year} wage base of $184,500) plus 1.45% Medicare on all wages, 7.65% total, matched by your employer.',
             'It is the Social Security and Medicare tax: 6.2% and 1.45%, with an extra 0.9% Medicare above $200,000 (single) or $250,000 (married).',
             'FICA combines Social Security (6.2%, capped) and Medicare (1.45%, uncapped) for 7.65% of your gross pay.',
         ])],
-        ['q' => 'What is the 2026 federal standard deduction?', 'a' => $pick('stdded', [
-            'For 2026 it is roughly $16,100 for single filers and $32,200 for married filing jointly, and it is built into your withholding.',
-            'About $16,100 single and $32,200 joint in 2026, the slice of income the IRS lets you earn tax-free.',
-            'The 2026 standard deduction is approximately $16,100 (single) or $32,200 (married), which most filers take instead of itemizing.',
+        ['q' => 'What is the {tax_year} federal standard deduction?', 'a' => $pick('stdded', [
+            'For {tax_year} it is roughly $16,100 for single filers and $32,200 for married filing jointly, and it is built into your withholding.',
+            'About $16,100 single and $32,200 joint in {tax_year}, the slice of income the IRS lets you earn tax-free.',
+            'The {tax_year} standard deduction is approximately $16,100 (single) or $32,200 (married), which most filers take instead of itemizing.',
         ])],
         ['q' => 'How can I lower my ' . $name . ' income tax?', 'a' => $pick('lower', [
             'Contribute to a traditional 401(k) or IRA, use an HSA, and claim every credit you qualify for, each reduces your taxable income or tax bill.',
@@ -549,5 +550,9 @@ function usc_it_faqs_v6($state) {
         ])],
     ];
 
-    return usc_get_deterministic_faqs($state_slug, $faq_pool, 12);
+    $faqs = usc_get_deterministic_faqs($state_slug, $faq_pool, 12);
+    $ty = function_exists('usac_get_active_tax_year') ? usac_get_active_tax_year() : '2026';
+    foreach ($faqs as &$f) { $f['q'] = str_replace('{tax_year}', $ty, $f['q']); $f['a'] = str_replace('{tax_year}', $ty, $f['a']); }
+    unset($f);
+    return $faqs;
 }

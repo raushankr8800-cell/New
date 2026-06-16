@@ -484,12 +484,12 @@ function usc_paycheck_article_v6($state) {
 <h2>12. ' . usc_pv6_h($state_slug, 'usecases', ['Practical Use Cases', 'Real-World Scenarios', 'When to Reach for This Tool', 'Everyday Uses']) . '</h2>
 <p>' . $sec('usecases') . '</p>
 
-<h2>13. ' . usc_pv6_h($state_slug, 'keynums', ['Key ' . $name . ' Paycheck Numbers for 2026', '2026 Tax Figures That Affect Your ' . $name . ' Check', 'The 2026 Numbers Behind Your Estimate', $name . ' Paycheck: 2026 Rates at a Glance']) . '</h2>
-<p>Tax figures refresh every year, so here are the federal numbers baked into your 2026 estimate, alongside ' . $name . '\'s own rules:</p>
+<h2>13. ' . usc_pv6_h($state_slug, 'keynums', ['Key ' . $name . ' Paycheck Numbers for {tax_year}', '{tax_year} Tax Figures That Affect Your ' . $name . ' Check', 'The {tax_year} Numbers Behind Your Estimate', $name . ' Paycheck: {tax_year} Rates at a Glance']) . '</h2>
+<p>Tax figures refresh every year, so here are the federal numbers baked into your {tax_year} estimate, alongside ' . $name . '\'s own rules:</p>
 ' . usc_pv6_list($state_slug, 'keynums', [
-    '<strong>Social Security (OASDI):</strong> 6.2% on wages up to the 2026 wage base of <strong>$184,500</strong>.',
+    '<strong>Social Security (OASDI):</strong> 6.2% on wages up to the {tax_year} wage base of <strong>$184,500</strong>.',
     '<strong>Medicare:</strong> 1.45% on every dollar, plus an extra <strong>0.9%</strong> above $200,000 (single) or $250,000 (married filing jointly).',
-    '<strong>2026 standard deduction:</strong> about <strong>$16,100</strong> (single), <strong>$32,200</strong> (married filing jointly), and <strong>$24,150</strong> (head of household).',
+    '<strong>{tax_year} standard deduction:</strong> about <strong>$16,100</strong> (single), <strong>$32,200</strong> (married filing jointly), and <strong>$24,150</strong> (head of household).',
     '<strong>' . $name . ' state tax:</strong> ' . $desc_sentence,
 ], 4) . '
 
@@ -510,6 +510,7 @@ function usc_paycheck_article_v6($state) {
 <!-- usc-v5-article -->
 <!-- usc-paycheck-v6 -->';
 
+    $html = str_replace('{tax_year}', (function_exists('usac_get_active_tax_year') ? usac_get_active_tax_year() : '2026'), $html);
     return $html;
 }
 
@@ -561,9 +562,9 @@ function usc_paycheck_faqs_v6($state) {
         ])],
         ['q' => 'Does ' . $name . ' have a state income tax?', 'a' => $stax[usc_get_variation_index($state_slug, 'faqa_stax', count($stax))]],
         ['q' => 'What is FICA, and how is it figured on my ' . $name . ' pay stub?', 'a' => $pick('fica', [
-            'FICA is two taxes: 6.2% for Social Security (on wages up to the 2026 base of $184,500) and 1.45% for Medicare with no cap. Your employer quietly matches both.',
+            'FICA is two taxes: 6.2% for Social Security (on wages up to the {tax_year} base of $184,500) and 1.45% for Medicare with no cap. Your employer quietly matches both.',
             'It stands for the Federal Insurance Contributions Act, 6.2% Social Security plus 1.45% Medicare. High earners also pay an extra 0.9% Medicare above $200,000 (single) or $250,000 (married).',
-            'FICA bundles Social Security (6.2%, capped at the $184,500 wage base in 2026) and Medicare (1.45%, uncapped). Together that is 7.65% of your gross, matched by your employer.',
+            'FICA bundles Social Security (6.2%, capped at the $184,500 wage base in {tax_year}) and Medicare (1.45%, uncapped). Together that is 7.65% of your gross, matched by your employer.',
         ])],
         ['q' => 'How does a pre-tax deduction lower my tax in ' . $name . '?', 'a' => $pick('pretax', [
             'Pre-tax items, a traditional 401(k), HSA, FSA, or medical premiums, come out before income tax is figured, shrinking the income that federal and ' . $name . ' tax apply to.',
@@ -585,10 +586,10 @@ function usc_paycheck_faqs_v6($state) {
             'Allowances are gone. The current W-4 asks about household income and dependents instead, which usually makes withholding more accurate.',
             'The modern W-4 replaced the allowance system with a clearer five-step process, so what you enter maps more directly to your real tax situation.',
         ])],
-        ['q' => 'What is the 2026 federal standard deduction?', 'a' => $pick('stdded', [
-            'For 2026 it is about $16,100 (single), $32,200 (married filing jointly), and $24,150 (head of household), and it is already built into your withholding.',
-            'Roughly $16,100 for single filers and $32,200 for joint filers in 2026. Most people take it rather than itemizing.',
-            'The 2026 standard deduction is approximately $16,100 single / $32,200 joint / $24,150 head of household, the slice of income the IRS lets you earn tax-free.',
+        ['q' => 'What is the {tax_year} federal standard deduction?', 'a' => $pick('stdded', [
+            'For {tax_year} it is about $16,100 (single), $32,200 (married filing jointly), and $24,150 (head of household), and it is already built into your withholding.',
+            'Roughly $16,100 for single filers and $32,200 for joint filers in {tax_year}. Most people take it rather than itemizing.',
+            'The {tax_year} standard deduction is approximately $16,100 single / $32,200 joint / $24,150 head of household, the slice of income the IRS lets you earn tax-free.',
         ])],
         ['q' => 'How can I increase my take-home pay in ' . $name . '?', 'a' => $pick('increase', [
             'On your W-4 you can claim dependent credits or deductions to reduce withholding, just do not overdo it, or you may owe at tax time.',
@@ -641,9 +642,9 @@ function usc_paycheck_faqs_v6($state) {
             'It handles either pay structure. Whether you are paid by the hour or on salary, the calculator converts it to a per-period ' . $name . ' take-home figure.',
         ])],
         ['q' => 'How current are the tax numbers in this calculator?', 'a' => $pick('update', [
-            'It uses 2026 federal brackets, the standard deduction, and the Social Security wage base, with ' . $name . ' rules applied as currently published.',
-            'The federal figures are the 2026 values, reviewed each year, and the ' . $name . ' state treatment reflects the latest published rates.',
-            'All federal inputs are set to 2026, and ' . $name . ' state rules are kept current, so your estimate reflects today\'s law, not last year\'s.',
+            'It uses {tax_year} federal brackets, the standard deduction, and the Social Security wage base, with ' . $name . ' rules applied as currently published.',
+            'The federal figures are the {tax_year} values, reviewed each year, and the ' . $name . ' state treatment reflects the latest published rates.',
+            'All federal inputs are set to {tax_year}, and ' . $name . ' state rules are kept current, so your estimate reflects today\'s law, not last year\'s.',
         ])],
         ['q' => 'Can I compare a ' . $name . ' job offer against another state?', 'a' => $pick('compare', [
             'Yes. Run the same salary here and on another state\'s calculator; because state rules differ, the net pay can vary even on an identical gross.',
@@ -652,5 +653,9 @@ function usc_paycheck_faqs_v6($state) {
         ])],
     ];
 
-    return usc_get_deterministic_faqs($state_slug, $faq_pool, 12);
+    $faqs = usc_get_deterministic_faqs($state_slug, $faq_pool, 12);
+    $ty = function_exists('usac_get_active_tax_year') ? usac_get_active_tax_year() : '2026';
+    foreach ($faqs as &$f) { $f['q'] = str_replace('{tax_year}', $ty, $f['q']); $f['a'] = str_replace('{tax_year}', $ty, $f['a']); }
+    unset($f);
+    return $faqs;
 }

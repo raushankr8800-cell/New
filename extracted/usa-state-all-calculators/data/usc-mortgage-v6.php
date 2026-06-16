@@ -388,8 +388,8 @@ function usc_mtg_article_v6($state) {
   <h2>12. ' . usc_pv6_h($state_slug, 'mconclusion', ['Taking Control of Your Home Financing', 'Final Thoughts', 'The Bottom Line', 'Wrapping Up']) . '</h2>
   <p>' . $sec('conclusion') . '</p>
 
-  <h2>13. ' . esc_html($name) . ' Mortgage Costs to Watch in 2026</h2>
-  <p>A few moving parts shape your ' . esc_html($name) . ' payment in 2026. Thirty-year fixed rates have hovered in the mid-6% range, so even a half-point change noticeably moves your monthly number. Conventional loans require PMI until you reach 20% equity, FHA loans allow as little as 3.5% down, and most lenders look for a total debt-to-income ratio under about 43%. With ' . esc_html($name) . '\'s property-tax rate near ' . number_format($ptr, 2) . '%, adjust the tax field to your county for the most realistic estimate. As a gut-check, many planners suggest keeping total housing under roughly 28% of gross monthly income.</p>
+  <h2>13. ' . esc_html($name) . ' Mortgage Costs to Watch in {tax_year}</h2>
+  <p>A few moving parts shape your ' . esc_html($name) . ' payment in {tax_year}. Thirty-year fixed rates have hovered in the mid-6% range, so even a half-point change noticeably moves your monthly number. Conventional loans require PMI until you reach 20% equity, FHA loans allow as little as 3.5% down, and most lenders look for a total debt-to-income ratio under about 43%. With ' . esc_html($name) . '\'s property-tax rate near ' . number_format($ptr, 2) . '%, adjust the tax field to your county for the most realistic estimate. As a gut-check, many planners suggest keeping total housing under roughly 28% of gross monthly income.</p>
   <h3>What makes up your monthly payment (PITI)</h3>
 ' . usc_pv6_list($state_slug, 'mpiti', [
     '<strong>Principal:</strong> the part that pays down what you borrowed; it starts small and grows each year.',
@@ -425,6 +425,7 @@ function usc_mtg_article_v6($state) {
 </div>
 <!-- usc-mortgage-v6 -->';
 
+    $html = str_replace('{tax_year}', (function_exists('usac_get_active_tax_year') ? usac_get_active_tax_year() : '2026'), $html);
     return $html;
 }
 
