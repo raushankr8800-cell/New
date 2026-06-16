@@ -455,6 +455,9 @@ function ust_get_property_tax_default_content($state) {
  * Generates dynamic SEO article content for the Sales Tax Calculator
  */
 function ust_get_sales_tax_default_content($state) {
+    if (function_exists('usc_st_article_v6')) {
+        return usc_st_article_v6($state);
+    }
     $name = $state['name'];
     $sales_rate = $state['sales_rate'];
     $state_slug = strtolower(str_replace(' ', '-', $name));
@@ -563,6 +566,9 @@ function ust_get_property_tax_faqs($state) {
  * Returns dynamic FAQs for Sales Tax
  */
 function ust_get_sales_tax_faqs($state) {
+    if (function_exists('usc_st_faqs_v6')) {
+        return usc_st_faqs_v6($state);
+    }
     $name = $state['name'];
     $sales_rate = $state['sales_rate'];
     $state_slug = strtolower(str_replace(' ', '-', $name));
