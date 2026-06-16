@@ -93,12 +93,17 @@ $ust_outdated = empty($post_content);
 if ($calc_type === 'income-tax' && strpos($post_content, '<!-- ust-income-v6 -->') === false) {
     $ust_outdated = true;
 }
+// Property Tax pages upgrade to the V6 content engine.
+if ($calc_type === 'property-tax' && strpos($post_content, '<!-- ust-property-v6 -->') === false) {
+    $ust_outdated = true;
+}
 if ($state_info && $ust_outdated) {
     if ($calc_type === 'income-tax') {
         $new_content = ust_get_income_tax_default_content($state_info);
         update_post_meta($post_id, '_ust_faqs', ust_get_income_tax_faqs($state_info));
     } elseif ($calc_type === 'property-tax') {
         $new_content = ust_get_property_tax_default_content($state_info);
+        update_post_meta($post_id, '_ust_faqs', ust_get_property_tax_faqs($state_info));
     } else {
         $new_content = ust_get_sales_tax_default_content($state_info);
     }

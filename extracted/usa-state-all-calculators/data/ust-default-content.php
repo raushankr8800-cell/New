@@ -391,6 +391,9 @@ function ust_get_income_tax_default_content($state) {
  * Generates dynamic SEO article content for the Property Tax Calculator
  */
 function ust_get_property_tax_default_content($state) {
+    if (function_exists('usc_pt_article_v6')) {
+        return usc_pt_article_v6($state);
+    }
     $name = $state['name'];
     $prop_rate = $state['prop_rate'];
     $state_slug = strtolower(str_replace(' ', '-', $name));
@@ -533,6 +536,9 @@ function ust_get_income_tax_faqs($state) {
  * Returns dynamic FAQs for Property Tax
  */
 function ust_get_property_tax_faqs($state) {
+    if (function_exists('usc_pt_faqs_v6')) {
+        return usc_pt_faqs_v6($state);
+    }
     $name = $state['name'];
     $prop_rate = $state['prop_rate'];
     $state_slug = strtolower(str_replace(' ', '-', $name));
