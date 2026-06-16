@@ -542,10 +542,10 @@ body.usc-embed-mode .usc-article-wrapper,body.usc-embed-mode .usc-faq-section-wr
                 <?php
                 // Icon colors for variety  same soft palette as Calfy
                 $icon_palettes = [
-                    ['bg' => '#f5f3ff', 'emoji' => '??'],
-                    ['bg' => '#f0fdf4', 'emoji' => '??'],
-                    ['bg' => '#f0f9ff', 'emoji' => '??'],
-                    ['bg' => '#fff7ed', 'emoji' => '??'],
+                    ['bg' => '#f5f3ff'],
+                    ['bg' => '#f0fdf4'],
+                    ['bg' => '#f0f9ff'],
+                    ['bg' => '#fff7ed'],
                 ];
 
                 $all_types = ['paycheck', 'child-support', 'alimony'];
@@ -562,17 +562,17 @@ body.usc-embed-mode .usc-article-wrapper,body.usc-embed-mode .usc-faq-section-wr
                         if ($opp_type === 'paycheck') {
                             $opp_title = strtoupper($state_name) . ' PAYCHECK CALCULATOR';
                             $opp_desc = 'SALARY  FEDERAL TAX  STATE TAX  FICA  TAKE-HOME PAY';
-                            $emoji = '??';
+                            $emoji = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="9" y1="6" x2="15" y2="6"/><line x1="9" y1="10" x2="9" y2="10.01"/><line x1="12" y1="10" x2="12" y2="10.01"/><line x1="15" y1="10" x2="15" y2="10.01"/><line x1="9" y1="14" x2="9" y2="14.01"/><line x1="12" y1="14" x2="12" y2="14.01"/><line x1="15" y1="14" x2="15" y2="18"/><line x1="9" y1="18" x2="12" y2="18"/></svg>';
                             $bg_col = '#f0fdf4';
                         } elseif ($opp_type === 'alimony') {
                             $opp_title = strtoupper($state_name) . ' ALIMONY CALCULATOR';
                             $opp_desc = 'SPOUSAL SUPPORT  DURATION  MAINTENANCE  INCOME SPLIT';
-                            $emoji = '??';
+                            $emoji = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="9" y1="6" x2="15" y2="6"/><line x1="9" y1="10" x2="9" y2="10.01"/><line x1="12" y1="10" x2="12" y2="10.01"/><line x1="15" y1="10" x2="15" y2="10.01"/><line x1="9" y1="14" x2="9" y2="14.01"/><line x1="12" y1="14" x2="12" y2="14.01"/><line x1="15" y1="14" x2="15" y2="18"/><line x1="9" y1="18" x2="12" y2="18"/></svg>';
                             $bg_col = '#f5f3ff';
                         } else {
                             $opp_title = strtoupper($state_name) . ' CHILD SUPPORT CALCULATOR';
                             $opp_desc = 'CUSTODY SCHEDULE  INCOME SHARE  SUPPORT OBLIGATIONS  ESTIMATES';
-                            $emoji = '??';
+                            $emoji = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="9" y1="6" x2="15" y2="6"/><line x1="9" y1="10" x2="9" y2="10.01"/><line x1="12" y1="10" x2="12" y2="10.01"/><line x1="15" y1="10" x2="15" y2="10.01"/><line x1="9" y1="14" x2="9" y2="14.01"/><line x1="12" y1="14" x2="12" y2="14.01"/><line x1="15" y1="14" x2="15" y2="18"/><line x1="9" y1="18" x2="12" y2="18"/></svg>';
                             $bg_col = '#f0f9ff';
                         }
                         $pal = $icon_palettes[$card_index % 4];
@@ -606,17 +606,17 @@ body.usc-embed-mode .usc-article-wrapper,body.usc-embed-mode .usc-faq-section-wr
                         if ($calc_type === 'paycheck') {
                             $p_title = strtoupper($p_info['name']) . ' PAYCHECK CALCULATOR';
                             $p_desc  = 'FEDERAL  STATE TAX  FICA  NET PAY ESTIMATE';
-                            $emoji = '??';
+                            $emoji = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="9" y1="6" x2="15" y2="6"/><line x1="9" y1="10" x2="9" y2="10.01"/><line x1="12" y1="10" x2="12" y2="10.01"/><line x1="15" y1="10" x2="15" y2="10.01"/><line x1="9" y1="14" x2="9" y2="14.01"/><line x1="12" y1="14" x2="12" y2="14.01"/><line x1="15" y1="14" x2="15" y2="18"/><line x1="9" y1="18" x2="12" y2="18"/></svg>';
                             $bg_col = '#f0fdf4';
                         } elseif ($calc_type === 'alimony') {
                             $p_title = strtoupper($p_info['name']) . ' ALIMONY CALCULATOR';
                             $p_desc  = 'SPOUSAL SUPPORT ESTIMATES  STATUTORY GUIDELINES';
-                            $emoji = '??';
+                            $emoji = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="9" y1="6" x2="15" y2="6"/><line x1="9" y1="10" x2="9" y2="10.01"/><line x1="12" y1="10" x2="12" y2="10.01"/><line x1="15" y1="10" x2="15" y2="10.01"/><line x1="9" y1="14" x2="9" y2="14.01"/><line x1="12" y1="14" x2="12" y2="14.01"/><line x1="15" y1="14" x2="15" y2="18"/><line x1="9" y1="18" x2="12" y2="18"/></svg>';
                             $bg_col = '#f5f3ff';
                         } else {
                             $p_title = strtoupper($p_info['name']) . ' CHILD SUPPORT CALCULATOR';
                             $p_desc  = 'INCOME SHARES  CUSTODY NIGHTS  MONTHLY OBLIGATION';
-                            $emoji = '??';
+                            $emoji = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="9" y1="6" x2="15" y2="6"/><line x1="9" y1="10" x2="9" y2="10.01"/><line x1="12" y1="10" x2="12" y2="10.01"/><line x1="15" y1="10" x2="15" y2="10.01"/><line x1="9" y1="14" x2="9" y2="14.01"/><line x1="12" y1="14" x2="12" y2="14.01"/><line x1="15" y1="14" x2="15" y2="18"/><line x1="9" y1="18" x2="12" y2="18"/></svg>';
                             $bg_col = '#f0f9ff';
                         }
                         $card_index++;
