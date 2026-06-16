@@ -1408,7 +1408,7 @@ function ust_auto_generate_state_pages() {
             $post_status = get_post_status($post_id);
             if ($post_status === 'trash' || $post_status === 'draft') wp_update_post(['ID' => $post_id, 'post_status' => 'publish']);
             $post_content = $other_exists->post_content;
-            if (empty($post_content) || strpos($post_content, '<!-- ust-v12-article -->') === false) {
+            if (empty($post_content) || strpos($post_content, '<!-- ust-v12-article -->') === false || strpos($post_content, '<!-- other-v2 -->') === false) {
                 wp_update_post(['ID' => $post_id, 'post_content' => ust_get_other_tax_default_content($other_slug) . '<!-- ust-v12-article -->']);
                 update_post_meta($post_id, '_ust_faqs', ust_get_other_tax_faqs($other_slug));
             }

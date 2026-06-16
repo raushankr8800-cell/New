@@ -278,7 +278,7 @@ function ust_get_other_tax_faqs($slug) {
 /**
  * Generates dynamic SEO article content for Other Tax Calculators
  */
-function ust_get_other_tax_default_content($slug) {
+function ust_get_other_tax_core_content($slug) {
     switch ($slug) {
         case 'federal-income-tax-calculator':
             return '<!-- ust-v1-article -->
@@ -478,4 +478,141 @@ function ust_get_other_tax_default_content($slug) {
     }
 
     return '<h2>Introduction</h2><p>This general tax calculator helps you estimate your tax burdens quickly.</p>';
+}
+
+/**
+ * V2 wrapper: core article + calculator-specific extra sections (how-to + tips).
+ */
+function ust_get_other_tax_default_content($slug) {
+    $core  = ust_get_other_tax_core_content($slug);
+    $extra = ust_get_other_tax_extra_content($slug);
+    return $core . $extra . "\n<!-- other-v2 -->";
+}
+
+/**
+ * Calculator-specific extra sections appended to each national tax calculator,
+ * adding a practical how-to and tips/mistakes section for depth and SEO.
+ */
+function ust_get_other_tax_extra_content($slug) {
+    switch ($slug) {
+        case 'federal-income-tax-calculator':
+            return '
+<h2>5. How to Use This Calculator</h2>
+<p>Enter your gross annual income, choose your filing status, and add any pre-tax deductions such as a traditional 401(k) or HSA. The tool subtracts your standard deduction, applies the progressive federal brackets, adds FICA, and shows both your total federal tax and your estimated take-home pay. Adjust the inputs to see how a raise or a bigger retirement contribution changes the result.</p>
+<h2>6. Tips to Legally Lower Your Federal Tax</h2>
+<ul>
+    <li><strong>Maximize pre-tax accounts:</strong> traditional 401(k), 403(b), and HSA contributions reduce your taxable income dollar for dollar.</li>
+    <li><strong>Claim every credit:</strong> the Child Tax Credit, education credits, and the Saver\'s Credit cut your bill directly, not just your taxable income.</li>
+    <li><strong>Itemize when it pays:</strong> if mortgage interest, state taxes (up to $10,000), and charity exceed your standard deduction, itemizing saves more.</li>
+    <li><strong>Re-check your W-4</strong> after a marriage, new child, or raise to avoid a surprise bill.</li>
+</ul>';
+
+        case 'state-income-tax-calculator':
+            return '
+<h2>5. How to Compare State Income Taxes</h2>
+<p>Enter your income and select a state. Flat-tax states apply a single percentage, progressive states run your income through brackets, and no-income-tax states skip wage tax entirely. Because state tax sits on top of your federal liability, even a few percentage points meaningfully change your monthly take-home pay, especially at higher incomes.</p>
+<h2>6. Look Beyond the Income-Tax Rate</h2>
+<p>A state with no income tax is not automatically cheaper. States like Texas and Florida often offset it with higher property or sales taxes. Before you judge a state purely on its income-tax rate, weigh the combined burden, income, property, and sales tax together, against the local cost of living.</p>';
+
+        case 'income-tax-refund-calculator':
+            return '
+<h2>5. How to Use the Refund Estimator</h2>
+<p>Enter your income, the federal tax withheld so far, your filing status, and any deductions and credits. The tool compares your total estimated tax owed against what you have already paid through withholding, then shows whether you are on track for a refund or a balance due.</p>
+<h2>6. Turn a Big Refund Into Bigger Paychecks</h2>
+<p>A large refund feels great, but it means you lent the government money interest-free all year. If your refund is consistently big, file a fresh W-4 to reduce withholding and keep more in each paycheck, aiming for a near-zero balance so your money works for you year-round.</p>';
+
+        case 'tax-withholding-calculator':
+            return '
+<h2>5. How to Use This Withholding Calculator</h2>
+<p>Enter your gross pay, how often you are paid, and your W-4 filing status and adjustments. The tool annualizes your pay, applies the standard deduction and federal brackets, and divides the result by your number of pay periods to estimate the tax withheld from each check.</p>
+<h2>6. When to Re-Check Your Withholding</h2>
+<ul>
+    <li>After marriage, divorce, or a new child</li>
+    <li>When you buy a home or start itemizing</li>
+    <li>After a raise, bonus, or a second job</li>
+    <li>If you owed a lot or got a huge refund last year</li>
+</ul>
+<p>A small W-4 adjustment now is far easier than a large bill in April.</p>';
+
+        case 'tax-bracket-calculator':
+            return '
+<h2>5. How to Find Your Tax Bracket</h2>
+<p>Enter your taxable income and filing status. The tool identifies your marginal bracket, the rate on your last dollar earned, and calculates your effective rate, the average rate across all your income. Because the system is progressive, your effective rate is always lower than your top bracket.</p>
+<h2>6. Using Brackets to Plan Smarter</h2>
+<p>Only the income above each threshold is taxed at the higher rate, so crossing into a new bracket never penalizes your entire income. You can manage your bracket by timing deductible contributions, Roth conversions, or capital gains around the thresholds shown here.</p>';
+
+        case 'estimated-tax-calculator':
+            return '
+<h2>5. How to Estimate Your Quarterly Payments</h2>
+<p>Enter your expected net business profit and any other income. The tool computes your self-employment tax (15.3% on 92.35% of profit), applies the deductible half, adds your income tax, and divides the total into four quarterly payments.</p>
+<h2>6. Safe-Harbor Rule and Deadlines</h2>
+<p>To avoid IRS underpayment penalties, pay at least 90% of this year\'s tax, or 100% of last year\'s (110% if your AGI topped $150,000), through estimated payments. Quarterly deadlines fall in mid-April, mid-June, mid-September, and mid-January of the following year.</p>';
+
+        case 'capital-gains-tax-calculator':
+            return '
+<h2>5. How to Use This Calculator</h2>
+<p>Enter your purchase price (cost basis), the sale price, how long you held the asset, and your taxable income. The tool determines whether the gain is short-term (taxed as ordinary income) or long-term (0%, 15%, or 20%) and estimates the tax owed.</p>
+<h2>6. Smart Ways to Reduce Capital Gains Tax</h2>
+<ul>
+    <li><strong>Hold for over a year</strong> to qualify for the lower long-term rates.</li>
+    <li><strong>Harvest losses:</strong> sell losing positions to offset gains (tax-loss harvesting).</li>
+    <li><strong>Use the home exclusion:</strong> up to $250,000 ($500,000 married) of gain on a primary residence may be tax-free.</li>
+    <li><strong>Raise your cost basis</strong> by including fees and capital improvements.</li>
+</ul>';
+
+        case 'self-employment-tax-calculator':
+            return '
+<h2>5. How to Use This Calculator</h2>
+<p>Enter your net business profit (gross receipts minus business expenses). The tool applies the 92.35% factor, calculates the 15.3% self-employment tax, and shows the 50% above-the-line deduction you can claim against your income tax.</p>
+<h2>6. Ways to Lower Your Self-Employment Tax</h2>
+<p>Track every legitimate business deduction to reduce net profit, contribute to a SEP-IRA or Solo 401(k), and, at higher income levels, consider whether an S-corporation election (paying yourself a reasonable salary) could reduce the portion of income subject to SE tax. Always confirm with a tax professional.</p>';
+
+        case 'payroll-tax-calculator':
+            return '
+<h2>5. How to Use This Calculator</h2>
+<p>Enter the employee\'s wages, pay frequency, and W-4 details. The tool separates the employee withholdings (FICA plus income tax) from the employer\'s matching FICA and unemployment taxes, giving you the full cost of an employee on payroll.</p>
+<h2>6. Staying Compliant as an Employer</h2>
+<p>Employers must deposit withheld taxes on the IRS schedule, file Form 941 each quarter, and pay FUTA and state SUTA. Missed deposits carry steep penalties, so many small businesses use a payroll service to automate filings and stay current.</p>';
+
+        case 'sales-tax-calculator':
+            return '
+<h2>5. How to Use This Calculator</h2>
+<p>Enter the purchase price and select your city or county (or type a custom local rate). The tool combines the state baseline with local rates, applies any exemptions for groceries or medicine, and shows the tax and final total cost.</p>
+<h2>6. Save on Big Purchases</h2>
+<p>Combined rates can differ by a full percentage point between neighboring cities, which adds up on furniture, electronics, or a vehicle. For major buys, compare nearby jurisdictions, and remember that a handful of states (Delaware, Oregon, Montana, New Hampshire) charge no state sales tax at all.</p>';
+
+        case 'property-tax-estimator':
+            return '
+<h2>5. How to Use This Estimator</h2>
+<p>Enter your home\'s market value and your local effective rate or millage. The tool applies the assessment ratio, subtracts exemptions, and estimates your annual property tax plus the monthly amount most owners pay through mortgage escrow.</p>
+<h2>6. Ways to Lower Your Property Tax</h2>
+<ul>
+    <li><strong>Claim the homestead exemption</strong> on your primary residence.</li>
+    <li><strong>Check your assessment</strong> for errors in square footage or bedroom count.</li>
+    <li><strong>Appeal</strong> if comparable homes nearby are assessed for less.</li>
+    <li><strong>Look for relief programs</strong> for seniors, veterans, and disabled owners.</li>
+</ul>';
+
+        case 'effective-property-tax-rate-calculator':
+            return '
+<h2>5. How to Use This Calculator</h2>
+<p>Enter your annual property tax bill and your home\'s current market value. The tool divides one by the other to return your true effective tax rate, the cleanest way to compare property-tax burdens across counties and states.</p>
+<h2>6. Why the Effective Rate Matters</h2>
+<p>Nominal millage rates can mislead because assessment practices vary. A home with a high headline rate but a low assessment ratio may cost less than one with a low rate and full-value assessment. The effective rate cuts through that confusion so you compare apples to apples.</p>';
+
+        case 'state-tax-comparison-calculator':
+            return '
+<h2>5. How to Use This Comparison Tool</h2>
+<p>Enter your income and home value, then choose two states. The tool estimates state income tax and property tax for each, side by side, so you can see how a move would change both your paycheck and your housing costs.</p>
+<h2>6. Compare the Whole Picture</h2>
+<p>Headline rates rarely tell the full story. A no-income-tax state may carry high property or sales taxes, and cost of living varies widely. Use the combined estimate here as a starting point, then factor in sales tax, housing prices, and lifestyle before deciding.</p>';
+
+        case 'bonus-tax-calculator':
+            return '
+<h2>5. How to Use This Calculator</h2>
+<p>Enter your bonus amount, your regular pay details, and your state. The tool applies the federal supplemental rate (a flat 22% up to $1 million), FICA, and any state supplemental withholding to estimate the net bonus that actually reaches your account.</p>
+<h2>6. Will You Get Some of It Back?</h2>
+<p>Because the flat 22% withholding can be higher than your real marginal rate, you may have too much withheld on a bonus. The difference is not lost, it is reconciled when you file your annual return, and any excess comes back as part of your refund.</p>';
+    }
+    return '';
 }
