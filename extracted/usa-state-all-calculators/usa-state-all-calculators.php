@@ -2294,6 +2294,22 @@ function usac_render_hub_dashboard() {
         .usac-link-chip:hover{background:#2563eb;color:#fff;border-color:#2563eb}
         .usac-link-chip.primary{background:#2563eb;color:#fff;border-color:#2563eb}
         .usac-link-chip.primary:hover{background:#1d4ed8}
+        @media (max-width:782px){
+            .usac-stat-grid{grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+            .usac-stat-card{padding:16px 14px}
+            .usac-stat-val{font-size:26px}
+            .usac-stat-icon{width:40px;height:40px;font-size:17px}
+            .usac-grid-2{grid-template-columns:1fr;gap:16px}
+            .usac-calc-table{display:block;overflow-x:auto;white-space:nowrap}
+            .usc-dashboard-banner-new{padding:20px;flex-direction:column;align-items:flex-start;gap:16px}
+            .usc-dashboard-banner-new h1{font-size:20px}
+            .usc-banner-icon{font-size:22px}
+            .usc-banner-right{display:flex;flex-wrap:wrap;gap:10px;width:100%}
+            .usc-banner-right>a,.usc-banner-right>span{flex:1 1 140px;justify-content:center;text-align:center}
+        }
+        @media (max-width:480px){
+            .usac-stat-grid{grid-template-columns:1fr}
+        }
         </style>
 
         <div class="usac-hub-wrap">
@@ -2471,40 +2487,115 @@ function ust_render_leads_page() {
 // USAGE ANALYTICS — USC
 // ============================================================
 
-function usc_render_usage_page() {
+function usac_render_usage_analytics($table_suffix, $heading, $subtitle, $accent) {
     global $wpdb;
-    $usage = $wpdb->get_results("SELECT u.*, p.post_title FROM {$wpdb->prefix}usc_usage_stats u LEFT JOIN {$wpdb->posts} p ON u.post_id = p.ID ORDER BY u.count DESC", ARRAY_A);
+    $table = $wpdb->prefix . $table_suffix;
+    $rows  = $wpdb->get_results("SELECT u.*, p.post_title FROM {$table} u LEFT JOIN {$wpdb->posts} p ON u.post_id = p.ID ORDER BY u.count DESC", ARRAY_A);
+    if (!is_array($rows)) $rows = [];
+
+    $total_runs = 0; $tracked = 0; $top = null; $maxc = 0;
+    foreach ($rows as $r) {
+        $c = (int) $r['count'];
+        $total_runs += $c;
+        if ($c > 0) $tracked++;
+        if ($c > $maxc) { $maxc = $c; $top = $r; }
+    }
+    $avg = $tracked > 0 ? round($total_runs / $tracked) : 0;
+    $top_title = $top ? ($top['post_title'] ?: 'Calculator') : 'None yet';
+    $top_count = $top ? (int) $top['count'] : 0;
     ?>
-    <div class="usc-admin-wrap">
-        <div class="usc-panel">
-            <div class="usc-panel-header" style="border-bottom: none; padding-bottom: 0;">
-                <div>
-                    <h2 style="font-size:22px; margin-bottom: 5px;">Paycheck/Legal — Usage Analytics</h2>
-                    <p style="margin: 0; color: var(--usc-text-muted); font-size:13px;">Total calculations triggered per paycheck/child support/alimony/mortgage calculator.</p>
+    <div class="usacan-wrap">
+        <h1 class="usacan-title"><?php echo esc_html($heading); ?></h1>
+        <p class="usacan-sub"><?php echo esc_html($subtitle); ?></p>
+
+        <div class="usacan-cards">
+            <div class="usacan-card"><div class="usacan-c-val"><?php echo number_format($total_runs); ?></div><div class="usacan-c-lbl">Total Calculations</div></div>
+            <div class="usacan-card"><div class="usacan-c-val"><?php echo number_format($tracked); ?></div><div class="usacan-c-lbl">Calculators Used</div></div>
+            <div class="usacan-card"><div class="usacan-c-val"><?php echo number_format($avg); ?></div><div class="usacan-c-lbl">Avg Runs / Calculator</div></div>
+            <div class="usacan-card usacan-card-top"><div class="usacan-c-val usacan-c-top"><?php echo esc_html($top_title); ?></div><div class="usacan-c-lbl">Top Calculator (<?php echo number_format($top_count); ?> runs)</div></div>
+        </div>
+
+        <?php if (empty($rows) || $total_runs === 0) : ?>
+            <div class="usacan-panel"><div class="usacan-empty">No calculations recorded yet. Once visitors start using your calculators, usage and rankings will appear here.</div></div>
+        <?php else : ?>
+            <div class="usacan-panel">
+                <h2 class="usacan-h2">Top 10 Calculators by Usage</h2>
+                <div class="usacan-board">
+                    <?php $rank = 0; foreach (array_slice($rows, 0, 10) as $r) : if ((int) $r['count'] <= 0) continue; $rank++; $pct = $maxc > 0 ? round(((int) $r['count'] / $maxc) * 100) : 0; ?>
+                        <div class="usacan-row">
+                            <div class="usacan-rank">#<?php echo (int) $rank; ?></div>
+                            <div class="usacan-bar-wrap">
+                                <div class="usacan-bar-top"><span class="usacan-name"><?php echo esc_html($r['post_title'] ?: 'Calculator'); ?></span><span class="usacan-num"><?php echo number_format((int) $r['count']); ?></span></div>
+                                <div class="usacan-bar-bg"><div class="usacan-bar-fill" style="width:<?php echo (int) $pct; ?>%;"></div></div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
             </div>
-            <div class="usc-panel-content" style="padding: 24px 0 0 0;">
-                <table class="usc-custom-table" style="border-top: 1px solid var(--usc-border);">
-                    <thead><tr><th>State Calculator</th><th>Total Run Count</th><th>Last Run Date</th><th style="width: 100px; text-align: center;">Actions</th></tr></thead>
-                    <tbody>
-                        <?php if (empty($usage)) : ?>
-                            <tr><td colspan="4" style="text-align: center; padding: 30px; color: var(--usc-text-muted);">No logs recorded yet.</td></tr>
-                        <?php else : ?>
-                            <?php foreach ($usage as $use) : ?>
-                                <tr>
-                                    <td><strong><?php echo esc_html($use['post_title'] ?: 'State Calculator'); ?></strong></td>
-                                    <td><span class="usc-badge-run"><?php echo esc_html($use['count']); ?> calculations</span></td>
-                                    <td style="color: var(--usc-text-muted);"><?php echo esc_html($use['last_used']); ?></td>
-                                    <td style="text-align: center;"><a href="<?php echo esc_url(get_edit_post_link($use['post_id'])); ?>" class="usc-btn usc-btn-white" style="padding: 4px 8px; font-size:12px;">Edit Settings</a></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+
+            <div class="usacan-panel">
+                <h2 class="usacan-h2">All Calculators</h2>
+                <div class="usacan-table-scroll">
+                    <table class="usacan-table">
+                        <thead><tr><th>Calculator</th><th>Total Runs</th><th>Last Run</th><th>Action</th></tr></thead>
+                        <tbody>
+                        <?php foreach ($rows as $r) : ?>
+                            <tr>
+                                <td data-l="Calculator"><strong><?php echo esc_html($r['post_title'] ?: 'Calculator'); ?></strong></td>
+                                <td data-l="Total Runs"><?php echo number_format((int) $r['count']); ?></td>
+                                <td data-l="Last Run"><?php echo esc_html($r['last_used']); ?></td>
+                                <td data-l="Action"><a href="<?php echo esc_url(get_edit_post_link($r['post_id'])); ?>">Edit Settings</a></td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
+        <?php endif; ?>
     </div>
+    <style>
+    .usacan-wrap{max-width:1100px;margin:18px 20px 40px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+    .usacan-title{font-size:23px;font-weight:800;color:#111827;margin:0 0 4px}
+    .usacan-sub{font-size:13px;color:#6b7280;margin:0 0 20px}
+    .usacan-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+    .usacan-card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+    .usacan-c-val{font-size:28px;font-weight:800;color:#111827;line-height:1.1;word-break:break-word}
+    .usacan-c-top{font-size:15px;line-height:1.25}
+    .usacan-c-lbl{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:#6b7280;margin-top:6px}
+    .usacan-card-top{border-left:4px solid <?php echo esc_attr($accent); ?>}
+    .usacan-panel{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:18px 20px;margin-bottom:20px;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+    .usacan-h2{font-size:15px;font-weight:700;color:#111827;margin:0 0 14px}
+    .usacan-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+    .usacan-rank{font-size:13px;font-weight:800;color:#9ca3af;width:34px;flex-shrink:0}
+    .usacan-bar-wrap{flex:1;min-width:0}
+    .usacan-bar-top{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;margin-bottom:4px}
+    .usacan-name{font-weight:600;color:#374151;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .usacan-num{font-weight:800;color:#111827;flex-shrink:0}
+    .usacan-bar-bg{height:9px;background:#f1f5f9;border-radius:99px;overflow:hidden}
+    .usacan-bar-fill{height:100%;border-radius:99px;background:<?php echo esc_attr($accent); ?>;min-width:3px}
+    .usacan-table-scroll{overflow-x:auto}
+    .usacan-table{width:100%;border-collapse:collapse}
+    .usacan-table th{padding:10px 12px;text-align:left;font-size:11px;font-weight:700;color:#6b7280;letter-spacing:.6px;text-transform:uppercase;background:#f9fafb;border-bottom:1px solid #e5e7eb;white-space:nowrap}
+    .usacan-table td{padding:11px 12px;font-size:13px;color:#374151;border-bottom:1px solid #f3f4f6}
+    .usacan-table a{color:<?php echo esc_attr($accent); ?>;font-weight:600;text-decoration:none}
+    .usacan-empty{padding:30px;text-align:center;color:#6b7280;font-size:14px}
+    @media (max-width:782px){
+      .usacan-wrap{margin:12px 0 30px}
+      .usacan-cards{grid-template-columns:1fr 1fr;gap:10px}
+      .usacan-c-val{font-size:23px}
+      .usacan-table thead{display:none}
+      .usacan-table,.usacan-table tbody,.usacan-table tr,.usacan-table td{display:block;width:100%}
+      .usacan-table tr{border:1px solid #e5e7eb;border-radius:10px;margin-bottom:10px;padding:6px 10px;box-sizing:border-box}
+      .usacan-table td{border:none;display:flex;justify-content:space-between;gap:12px;padding:7px 0}
+      .usacan-table td:before{content:attr(data-l);font-weight:700;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+    }
+    @media (max-width:480px){ .usacan-cards{grid-template-columns:1fr} }
+    </style>
     <?php
+}
+
+function usc_render_usage_page() {
+    usac_render_usage_analytics('usc_usage_stats', 'Paycheck & Legal — Usage Analytics', 'Total calculations triggered per paycheck, child support, alimony, and mortgage calculator.', '#16a34a');
 }
 
 // ============================================================
@@ -2512,39 +2603,7 @@ function usc_render_usage_page() {
 // ============================================================
 
 function ust_render_usage_page() {
-    global $wpdb;
-    $usage = $wpdb->get_results("SELECT u.*, p.post_title FROM {$wpdb->prefix}ust_usage_stats u LEFT JOIN {$wpdb->posts} p ON u.post_id = p.ID ORDER BY u.count DESC", ARRAY_A);
-    ?>
-    <div class="ust-admin-wrap">
-        <div class="ust-panel">
-            <div class="ust-panel-header" style="border-bottom: none; padding-bottom: 0;">
-                <div>
-                    <h2 style="font-size:22px; margin-bottom: 5px;">Tax Calculators — Usage Analytics</h2>
-                    <p style="margin: 0; color: var(--ust-text-muted); font-size:13px;">Total calculations triggered per state tax calculator page.</p>
-                </div>
-            </div>
-            <div class="ust-panel-content" style="padding: 24px 0 0 0;">
-                <table class="ust-custom-table" style="border-top: 1px solid var(--ust-border);">
-                    <thead><tr><th>State Calculator</th><th>Total Run Count</th><th>Last Run Date</th><th style="width: 100px; text-align: center;">Actions</th></tr></thead>
-                    <tbody>
-                        <?php if (empty($usage)) : ?>
-                            <tr><td colspan="4" style="text-align: center; padding: 30px; color: var(--ust-text-muted);">No logs recorded yet.</td></tr>
-                        <?php else : ?>
-                            <?php foreach ($usage as $use) : ?>
-                                <tr>
-                                    <td><strong><?php echo esc_html($use['post_title'] ?: 'State Calculator'); ?></strong></td>
-                                    <td><span class="ust-badge-run"><?php echo esc_html($use['count']); ?> calculations</span></td>
-                                    <td style="color: var(--ust-text-muted);"><?php echo esc_html($use['last_used']); ?></td>
-                                    <td style="text-align: center;"><a href="<?php echo esc_url(get_edit_post_link($use['post_id'])); ?>" class="ust-btn ust-btn-white" style="padding: 4px 8px; font-size:12px;">Edit Settings</a></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <?php
+    usac_render_usage_analytics('ust_usage_stats', 'Tax Calculators — Usage Analytics', 'Total calculations triggered per state income, property, and sales tax calculator.', '#7c3aed');
 }
 
 // ============================================================
