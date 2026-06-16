@@ -857,17 +857,10 @@ function calculateAlimony(forceShow) {
     res.style.display = "block";
     
     res.innerHTML = `
-        <div class="hero-grid">
-            <div class="hero-card">
-                <div class="hero-lbl">ESTIMATED MONTHLY ALIMONY</div>
-                <div class="hero-val">$${Math.round(monthlyAlimony).toLocaleString()}</div>
-                <div class="hero-sub">Estimated Monthly Support</div>
-            </div>
-            <div class="hero-card">
-                <div class="hero-lbl">ANNUAL TOTAL</div>
-                <div class="hero-val">$${Math.round(annualAlimony).toLocaleString()}</div>
-                <div class="hero-sub">Estimated Annual Support</div>
-            </div>
+        <div class="usc-hero-result" style="background:linear-gradient(135deg,#15803d,#22c55e);color:#fff;border-radius:14px;padding:18px 16px;margin-bottom:14px;text-align:center;box-shadow:0 8px 22px rgba(34,197,94,.28);">
+            <div style="font-size:11.5px;font-weight:800;letter-spacing:.6px;opacity:.92;text-transform:uppercase;">Your Estimated Alimony</div>
+            <div style="font-size:34px;font-weight:900;line-height:1.05;margin:6px 0 3px;">$${Math.round(monthlyAlimony).toLocaleString()}<span style="font-size:13px;font-weight:700;opacity:.9;"> /month</span></div>
+            <div style="font-size:12.5px;font-weight:600;opacity:.95;">$${Math.round(annualAlimony).toLocaleString()}/yr estimated annual support</div>
         </div>
         
         <button onclick="saveAlimonyScenario()" style="width: 100%; margin-bottom: 15px; padding: 12px; background: var(--re); color: #fff; font-weight: 700; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px;">💾 SAVE THIS SCENARIO FOR COMPARISON</button>

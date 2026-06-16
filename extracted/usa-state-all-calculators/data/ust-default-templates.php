@@ -166,6 +166,12 @@ function ust_get_default_templates($type, $state_slug) {
 <div class="sec" id="results-panel" style="display:none;">
   <div class="sec-head"><label class="lbl">📊 CALCULATION SUMMARY</label></div>
 
+  <div class="ust-hero-result" style="background:linear-gradient(135deg,#15803d,#22c55e);color:#fff;border-radius:14px;padding:18px 16px;margin-bottom:16px;text-align:center;box-shadow:0 8px 22px rgba(34,197,94,.28);">
+    <div style="font-size:11.5px;font-weight:800;letter-spacing:.6px;opacity:.92;text-transform:uppercase;">Your Estimated Take-Home Pay</div>
+    <div style="font-size:34px;font-weight:900;line-height:1.05;margin:6px 0 3px;" id="hero-income-val">$0</div>
+    <div style="font-size:12.5px;font-weight:600;opacity:.95;" id="hero-income-sub"></div>
+  </div>
+
   <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 20px; margin-bottom: 20px; border-bottom: 1px solid var(--bdr); padding-bottom: 20px;">
     <!-- SVG Donut Chart -->
     <div style="position: relative; width: 160px; height: 160px; flex-shrink: 0;">
@@ -545,6 +551,8 @@ function calculateTax() {
     // Update UI Summary
     const displayedNet = net / frequency;
     document.getElementById("res-net-pay").innerText = "$" + Math.round(displayedNet).toLocaleString();
+    var hIV=document.getElementById("hero-income-val"); if(hIV) hIV.innerText = "$" + Math.round(displayedNet).toLocaleString();
+    var hIS=document.getElementById("hero-income-sub"); if(hIS) hIS.innerText = "$" + Math.round(net).toLocaleString() + "/yr \u2022 " + effRate.toFixed(1) + "% effective tax";
     
     const freqLabels = { "1": "ESTIMATED ANNUAL TAKE-HOME", "12": "ESTIMATED MONTHLY TAKE-HOME", "24": "ESTIMATED SEMI-MONTHLY TAKE-HOME", "26": "ESTIMATED BI-WEEKLY TAKE-HOME", "52": "ESTIMATED WEEKLY TAKE-HOME" };
     document.getElementById("lbl-net-pay").innerText = freqLabels[frequency] || "ESTIMATED ANNUAL TAKE-HOME";
@@ -815,6 +823,12 @@ document.addEventListener("DOMContentLoaded", function() {
 <!-- RESULTS PANEL -->
 <div class="sec" id="results-panel" style="display:none;">
   <div class="sec-head"><label class="lbl">📊 ESTIMATED TAX LIABILITY & EXPENSES</label></div>
+
+  <div class="ust-hero-result" style="background:linear-gradient(135deg,#15803d,#22c55e);color:#fff;border-radius:14px;padding:18px 16px;margin-bottom:16px;text-align:center;box-shadow:0 8px 22px rgba(34,197,94,.28);">
+    <div style="font-size:11.5px;font-weight:800;letter-spacing:.6px;opacity:.92;text-transform:uppercase;">Your Estimated Annual Property Tax</div>
+    <div style="font-size:34px;font-weight:900;line-height:1.05;margin:6px 0 3px;" id="hero-prop-val">$0</div>
+    <div style="font-size:12.5px;font-weight:600;opacity:.95;" id="hero-prop-sub"></div>
+  </div>
 
   <div class="grid2" style="margin-bottom: 20px;">
     <div class="det-card" style="text-align: center;">
@@ -1117,6 +1131,8 @@ function calculatePropertyTax() {
 
     // Update UI
     document.getElementById("res-annual-tax").innerText = "$" + Math.round(annualTax).toLocaleString();
+    var hPV=document.getElementById("hero-prop-val"); if(hPV) hPV.innerText = "$" + Math.round(annualTax).toLocaleString();
+    var hPS=document.getElementById("hero-prop-sub"); if(hPS) hPS.innerText = "$" + Math.round(monthlyTax).toLocaleString() + "/mo tax \u2022 $" + Math.round(totalMonthlyCost).toLocaleString() + "/mo total PITI";
     document.getElementById("res-monthly-tax").innerText = "$" + Math.round(monthlyTax).toLocaleString();
     document.getElementById("res-assessed-val").innerText = "$" + Math.round(assessed).toLocaleString();
     document.getElementById("res-exemptions-val").innerText = "$" + Math.round(exemptions).toLocaleString();
@@ -1444,6 +1460,12 @@ document.addEventListener("DOMContentLoaded", function() {
 <!-- RESULTS PANEL -->
 <div class="sec" id="results-panel" style="display:none;">
   <div class="sec-head"><label class="lbl">📊 ITEMISED INVOICE RECEIPT</label></div>
+
+  <div class="ust-hero-result" style="background:linear-gradient(135deg,#15803d,#22c55e);color:#fff;border-radius:14px;padding:18px 16px;margin-bottom:16px;text-align:center;box-shadow:0 8px 22px rgba(34,197,94,.28);">
+    <div style="font-size:11.5px;font-weight:800;letter-spacing:.6px;opacity:.92;text-transform:uppercase;">Your Estimated Total Cost</div>
+    <div style="font-size:34px;font-weight:900;line-height:1.05;margin:6px 0 3px;" id="hero-sales-val">$0.00</div>
+    <div style="font-size:12.5px;font-weight:600;opacity:.95;" id="hero-sales-sub"></div>
+  </div>
 
   <div class="grid2" style="margin-bottom: 20px;">
     <div class="det-card" style="text-align: center;">
@@ -1793,6 +1815,8 @@ function calculateSalesTax() {
     // Update UI
     document.getElementById("res-total-tax-amount").innerText = "$" + totalTaxAmount.toFixed(2);
     document.getElementById("res-total-cost").innerText = "$" + totalCost.toFixed(2);
+    var hSV=document.getElementById("hero-sales-val"); if(hSV) hSV.innerText = "$" + totalCost.toFixed(2);
+    var hSS=document.getElementById("hero-sales-sub"); if(hSS) hSS.innerText = "$" + totalTaxAmount.toFixed(2) + " sales tax included";
     document.getElementById("res-pretax-val").innerText = "$" + totalPreTax.toFixed(2);
     document.getElementById("res-discount-val").innerText = "-$" + (totalPreTax - totalDiscountedSubtotal).toFixed(2);
     document.getElementById("res-net-val").innerText = "$" + totalDiscountedSubtotal.toFixed(2);
