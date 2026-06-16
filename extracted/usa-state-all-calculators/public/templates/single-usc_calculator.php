@@ -274,13 +274,13 @@ body.usc-embed-mode .usc-article-wrapper,body.usc-embed-mode .usc-faq-section-wr
             <div class="badge">
                 <?php 
                 if ($calc_type === 'paycheck') {
-                    echo '?? ESTIMATE NET SALARY';
+                    echo '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:5px;"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> ESTIMATE NET SALARY';
                 } elseif ($calc_type === 'alimony') {
-                    echo '?? ESTIMATE SPOUSAL SUPPORT';
+                    echo '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:5px;"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg> ESTIMATE SPOUSAL SUPPORT';
                 } elseif ($calc_type === 'mortgage') {
-                    echo '?? ESTIMATE MORTGAGE PAYMENT';
+                    echo '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:5px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> ESTIMATE MORTGAGE PAYMENT';
                 } else {
-                    echo '?? ESTIMATE MONTHLY OBLIGATION';
+                    echo '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:5px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> ESTIMATE MONTHLY OBLIGATION';
                 }
                 ?>  FREE
             </div>
@@ -456,7 +456,7 @@ body.usc-embed-mode .usc-article-wrapper,body.usc-embed-mode .usc-faq-section-wr
 
             <?php if (get_post_meta($post_id, '_usc_enable_lead_capture', true) === '1') : ?>
                 <div id="usc-lead-capture-box" class="det-card" style="display:none;margin-top:20px;background:var(--soft);border-color:#fca5a5;text-align:center;">
-                    <div class="det-title">?? UNLOCK YOUR ESTIMATE REPORT</div>
+                    <div class="det-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:5px;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> UNLOCK YOUR ESTIMATE REPORT</div>
                     <p style="font-size:12.5px;color:#b91c1c;margin-bottom:15px;">Enter your name and email below to instantly view your full take-home pay or child support breakdown.</p>
                     <div class="field" style="max-width:320px;margin:0 auto 12px;">
                         <input type="text" id="usc-lead-name" class="inp" placeholder="Your Full Name" required>
