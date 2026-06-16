@@ -63,6 +63,28 @@ require_once UST_PATH . 'data/usc-salestax-v6.php';
 require_once UST_PATH . 'data/ust-default-templates.php';
 
 // ============================================================
+// PER-STATE FEATURED-IMAGE ALT TEXT (image SEO + accessibility)
+// ============================================================
+// Illustration attachments are shared across states, so set the alt text
+// dynamically from the post title on calculator single pages, e.g.
+// "California Paycheck Calculator illustration".
+add_filter('wp_get_attachment_image_attributes', 'usac_featured_image_alt', 20, 3);
+function usac_featured_image_alt($attr, $attachment, $size) {
+    if (is_admin() || !is_singular([USC_CPT, UST_CPT])) {
+        return $attr;
+    }
+    $post_id = get_queried_object_id();
+    if (!$post_id || (int) get_post_thumbnail_id($post_id) !== (int) $attachment->ID) {
+        return $attr;
+    }
+    $title = get_the_title($post_id);
+    if (!empty($title)) {
+        $attr['alt'] = $title . ' illustration';
+    }
+    return $attr;
+}
+
+// ============================================================
 // INITIALIZE CORE CLASSES
 // ============================================================
 

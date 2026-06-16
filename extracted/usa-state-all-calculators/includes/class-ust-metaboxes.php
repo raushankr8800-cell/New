@@ -210,14 +210,25 @@ class UST_Metaboxes {
         if (isset($_POST['ust_state_slug'])) {
             update_post_meta($post_id, '_ust_state_slug', sanitize_key($_POST['ust_state_slug']));
         }
-        if (isset($_POST['ust_calc_html'])) {
-            update_post_meta($post_id, '_ust_calc_html', wp_unslash($_POST['ust_calc_html']));
-        }
-        if (isset($_POST['ust_calc_css'])) {
-            update_post_meta($post_id, '_ust_calc_css', wp_unslash($_POST['ust_calc_css']));
-        }
-        if (isset($_POST['ust_calc_js'])) {
-            update_post_meta($post_id, '_ust_calc_js', wp_unslash($_POST['ust_calc_js']));
+        // Save code fields (respecting the unfiltered_html capability, mirrors USC side)
+        if (current_user_can('unfiltered_html')) {
+            if (isset($_POST['ust_calc_html'])) {
+                update_post_meta($post_id, '_ust_calc_html', wp_unslash($_POST['ust_calc_html']));
+            }
+            if (isset($_POST['ust_calc_css'])) {
+                update_post_meta($post_id, '_ust_calc_css', wp_unslash($_POST['ust_calc_css']));
+            }
+            if (isset($_POST['ust_calc_js'])) {
+                update_post_meta($post_id, '_ust_calc_js', wp_unslash($_POST['ust_calc_js']));
+            }
+        } else {
+            if (isset($_POST['ust_calc_html'])) {
+                update_post_meta($post_id, '_ust_calc_html', wp_kses_post(wp_unslash($_POST['ust_calc_html'])));
+            }
+            if (isset($_POST['ust_calc_css'])) {
+                update_post_meta($post_id, '_ust_calc_css', wp_strip_all_tags(wp_unslash($_POST['ust_calc_css'])));
+            }
+            // Custom JS is ignored for users without unfiltered_html.
         }
         if (isset($_POST['ust_seo_title'])) {
             update_post_meta($post_id, '_ust_seo_title', sanitize_text_field(wp_unslash($_POST['ust_seo_title'])));
@@ -225,7 +236,7 @@ class UST_Metaboxes {
         if (isset($_POST['ust_seo_desc'])) {
             update_post_meta($post_id, '_ust_seo_desc', sanitize_textarea_field(wp_unslash($_POST['ust_seo_desc'])));
         }
-        if (isset($_POST['ust_ads_code'])) {
+        if (isset($_POST['ust_ads_code']) && current_user_can('unfiltered_html')) {
             update_post_meta($post_id, '_ust_ads_code', wp_unslash($_POST['ust_ads_code']));
         }
 
