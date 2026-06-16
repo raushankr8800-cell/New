@@ -489,35 +489,133 @@ function usc_paycheck_faqs_v6($state) {
     $state_slug = strtolower(str_replace(' ', '-', $name));
     $x = usc_state_extra($state_slug);
 
+    $city1 = $x['cities'][0];
+    $rev   = $x['rev_name'];
+
+    // Deterministic answer-variation picker: each FAQ has several phrasings,
+    // and the state's slug selects which one it sees (so FAQs differ per page).
+    $pick = function($qkey, $arr) use ($state_slug) {
+        return $arr[usc_get_variation_index($state_slug, 'faqa_' . $qkey, count($arr))];
+    };
+
+    // State-income-tax answer: 3 phrasings per tax type.
     if ($type === 'none') {
-        $state_tax_desc = 'No, ' . $name . ' does not have a state income tax on wages. Your paycheck reflects only federal taxes, FICA, and any local city or county taxes.';
+        $stax = [
+            'No, ' . $name . ' does not tax wage income at the state level. Your check only reflects federal tax, FICA, and any local city or county tax, which is why take-home pay tends to run higher here.',
+            'There is no ' . $name . ' state income tax on wages. That leaves federal withholding and FICA as your main deductions, plus any local tax that applies where you live.',
+            $name . ' is one of the no-income-tax states, so nothing is withheld for state wage tax. You will still see federal tax and the 6.2% and 1.45% FICA lines on your stub.',
+        ];
     } elseif ($type === 'flat') {
-        $state_tax_desc = 'Yes, ' . $name . ' has a flat income tax of ' . $desc . ', applied to your taxable state income regardless of how much you earn.';
+        $stax = [
+            'Yes. ' . $name . ' applies a flat income tax, a ' . $desc . ', to your taxable state wages, no matter how much you earn.',
+            'Yes, ' . $name . ' uses a single flat rate (' . $desc . '). Because it does not change with income, your state-tax line is easy to predict each pay period.',
+            'It does. ' . $name . ' charges a flat ' . $desc . ' on taxable wages, so everyone pays the same percentage to the state regardless of salary.',
+        ];
     } else {
-        $state_tax_desc = 'Yes, ' . $name . ' uses a progressive income tax with rates noted as ' . $desc . '. Higher income tiers are taxed at higher percentages.';
+        $stax = [
+            'Yes. ' . $name . ' runs a progressive income tax (' . $desc . '), so higher slices of your income are taxed at higher rates.',
+            'Yes, ' . $name . ' uses graduated brackets noted as ' . $desc . '. Only the income that falls in each bracket is taxed at that bracket\'s rate.',
+            $name . ' does tax wages on a progressive scale (' . $desc . '), meaning your effective rate rises gradually as your earnings climb.',
+        ];
     }
 
     $faq_pool = [
-        ['q' => 'Is this ' . $name . ' paycheck calculator free to use?', 'a' => 'Yes, it is 100% free. Run unlimited calculations for salary or hourly wages, compare pay frequencies, and estimate deductions, with no fees and no registration.'],
-        ['q' => 'Does ' . $name . ' have a state income tax?', 'a' => $state_tax_desc],
-        ['q' => 'What is FICA and how is it calculated on my ' . $name . ' pay stub?', 'a' => 'FICA is two taxes in one: 6.2% for Social Security (on wages up to the 2026 wage base of $184,500) and 1.45% for Medicare (no cap, plus 0.9% extra above $200,000 single or $250,000 married). Your employer matches the 6.2% and 1.45% behind the scenes.'],
-        ['q' => 'How does a pre-tax deduction lower my tax in ' . $name . '?', 'a' => 'Pre-tax items like a traditional 401(k), HSA, FSA, and medical premiums are subtracted from gross pay before income tax is figured. That lowers your taxable income, so you owe less federal and ' . $name . ' state tax.'],
-        ['q' => 'What is the difference between gross pay and net pay?', 'a' => 'Gross pay is your total earnings before deductions. Net pay, or take-home pay, is what actually lands in your account after taxes, FICA, insurance, and retirement deductions are removed.'],
-        ['q' => 'How does the calculator handle local taxes in ' . $name . '?', 'a' => 'It includes a dropdown for local jurisdictions. If you live somewhere with city or county tax, select it so the estimate applies the correct localized withholding to your ' . $name . ' pay.'],
-        ['q' => 'What is the difference between the pre-2020 and current W-4?', 'a' => 'The pre-2020 W-4 used withholding allowances. The current W-4 (2020 onward) removed allowances and replaced them with a five-step process covering household income, multiple jobs, and dependents.'],
-        ['q' => 'What is the 2026 federal standard deduction?', 'a' => 'For 2026 it is roughly $16,100 for single filers, $32,200 for married filing jointly, and $24,150 for head of household. Most workers take the standard deduction, and it is already factored into your withholding.'],
-        ['q' => 'How can I increase my take-home pay in ' . $name . '?', 'a' => 'On your W-4 you can claim dependent credits (Step 3) or deductions (Step 4b) to reduce withholding. Be careful, claiming too much can leave you owing tax in April.'],
-        ['q' => 'Is the take-home figure here legally binding?', 'a' => 'No. It is a high-precision estimate based on standard federal, ' . $name . ', and local rules. Your real check may vary with your employer\'s exact payroll setup and benefit elections.'],
-        ['q' => 'What are post-tax deductions on a ' . $name . ' pay stub?', 'a' => 'Post-tax deductions, such as Roth 401(k) contributions, union dues, or voluntary savings, come out after taxes are calculated. They do not lower your taxable income but do reduce your net pay.'],
-        ['q' => 'How are overtime wages taxed in ' . $name . '?', 'a' => 'Overtime is taxed at the same rates as regular wages, but because it raises your earnings for that period, payroll may withhold at a higher marginal rate for that check. It evens out when you file your annual return.'],
-        ['q' => 'What is the additional Medicare tax for high earners?', 'a' => 'Wages above $200,000 (single) or $250,000 (married filing jointly) carry an extra 0.9% Medicare tax. Employers begin withholding it once your year-to-date wages cross the threshold.'],
-        ['q' => 'Traditional vs. Roth 401(k), which helps my ' . $name . ' paycheck today?', 'a' => 'Traditional 401(k) contributions are pre-tax, so they lower your taxable income and the tax withheld from today\'s check. Roth contributions are post-tax, so they do not reduce current withholding, but withdrawals in retirement are tax-free.'],
-        ['q' => 'My estimate is lower than my real check, why?', 'a' => 'Check for double-entered deductions or the wrong pay frequency. Also confirm your filing status matches your W-4 and that you are not exempt from a local or state tax the tool applied by default.'],
-        ['q' => 'Where can I verify ' . $name . ' withholding rules officially?', 'a' => 'The ' . $x['rev_name'] . ' publishes the official ' . $name . ' withholding tables, forms, and deadlines. For federal questions, the IRS Tax Withholding Estimator is the authoritative tool.'],
-        ['q' => 'How is take-home pay different for workers in ' . $x['cities'][0] . ' versus elsewhere in ' . $name . '?', 'a' => 'Federal tax and FICA are the same statewide. Differences usually come from local city or county taxes, which can apply in some ' . $name . ' areas, so select your jurisdiction for the most accurate estimate.'],
-        ['q' => 'Does the calculator work for both hourly and salaried ' . $name . ' jobs?', 'a' => 'Yes. Enter an annual salary or an hourly rate with hours worked. The tool annualizes either one, applies federal, FICA, and ' . $name . ' rules, and reports your net pay per period.'],
-        ['q' => 'How often do the tax numbers in this calculator update?', 'a' => 'The federal brackets, standard deduction, and Social Security wage base are reviewed yearly, and this tool uses 2026 figures. ' . $name . ' state rules are applied as currently published.'],
-        ['q' => 'Can I use this to compare a job offer in ' . $name . ' against another state?', 'a' => 'Yes. Run the same salary here and on a neighbouring state\'s calculator to compare take-home pay. Because state rules differ, the net figures can vary even when the gross salary is identical.'],
+        ['q' => 'Is this ' . $name . ' paycheck calculator free to use?', 'a' => $pick('free', [
+            'Yes, it is completely free. Run as many salary or hourly calculations as you like, compare pay frequencies, and estimate deductions, with no fee and no sign-up.',
+            'It is 100% free with no registration. Calculate take-home pay for any ' . $name . ' salary or wage as often as you need.',
+            'Absolutely free. There is no account, no paywall, and no limit on how many ' . $name . ' paycheck estimates you can run.',
+        ])],
+        ['q' => 'Does ' . $name . ' have a state income tax?', 'a' => $stax[usc_get_variation_index($state_slug, 'faqa_stax', count($stax))]],
+        ['q' => 'What is FICA, and how is it figured on my ' . $name . ' pay stub?', 'a' => $pick('fica', [
+            'FICA is two taxes: 6.2% for Social Security (on wages up to the 2026 base of $184,500) and 1.45% for Medicare with no cap. Your employer quietly matches both.',
+            'It stands for the Federal Insurance Contributions Act, 6.2% Social Security plus 1.45% Medicare. High earners also pay an extra 0.9% Medicare above $200,000 (single) or $250,000 (married).',
+            'FICA bundles Social Security (6.2%, capped at the $184,500 wage base in 2026) and Medicare (1.45%, uncapped). Together that is 7.65% of your gross, matched by your employer.',
+        ])],
+        ['q' => 'How does a pre-tax deduction lower my tax in ' . $name . '?', 'a' => $pick('pretax', [
+            'Pre-tax items, a traditional 401(k), HSA, FSA, or medical premiums, come out before income tax is figured, shrinking the income that federal and ' . $name . ' tax apply to.',
+            'They reduce your taxable income. Because the deduction happens before tax is calculated, every pre-tax dollar trims both your federal and ' . $name . ' state tax.',
+            'A pre-tax contribution lowers the base your taxes are calculated on, so you keep more today, though the money is taxed later when withdrawn (for retirement accounts).',
+        ])],
+        ['q' => 'What is the difference between gross pay and net pay?', 'a' => $pick('grossnet', [
+            'Gross pay is everything you earn before deductions; net pay is what is left, and what reaches your bank, after taxes, FICA, and benefits come out.',
+            'Gross is the headline number on your offer letter. Net, or take-home, is the smaller figure after withholding and deductions that you actually spend.',
+            'Think of gross as the total and net as the remainder. The gap between them is filled by federal tax, FICA, ' . $name . ' tax, and your benefit deductions.',
+        ])],
+        ['q' => 'How does the calculator handle local taxes in ' . $name . '?', 'a' => $pick('local', [
+            'It offers a local-jurisdiction option. If your city or county levies its own tax, select it so the estimate applies the right localized withholding.',
+            'Where ' . $name . ' localities charge income tax, you can pick your jurisdiction and the tool folds that rate into your result.',
+            'Local taxes are supported through a dropdown, useful in the parts of ' . $name . ' where a city, county, or school district adds its own withholding.',
+        ])],
+        ['q' => 'What changed between the pre-2020 and current W-4?', 'a' => $pick('w4', [
+            'The old W-4 used allowances; the 2020-and-later version dropped them for a five-step form covering income, multiple jobs, and dependents directly.',
+            'Allowances are gone. The current W-4 asks about household income and dependents instead, which usually makes withholding more accurate.',
+            'The modern W-4 replaced the allowance system with a clearer five-step process, so what you enter maps more directly to your real tax situation.',
+        ])],
+        ['q' => 'What is the 2026 federal standard deduction?', 'a' => $pick('stdded', [
+            'For 2026 it is about $16,100 (single), $32,200 (married filing jointly), and $24,150 (head of household), and it is already built into your withholding.',
+            'Roughly $16,100 for single filers and $32,200 for joint filers in 2026. Most people take it rather than itemizing.',
+            'The 2026 standard deduction is approximately $16,100 single / $32,200 joint / $24,150 head of household, the slice of income the IRS lets you earn tax-free.',
+        ])],
+        ['q' => 'How can I increase my take-home pay in ' . $name . '?', 'a' => $pick('increase', [
+            'On your W-4 you can claim dependent credits or deductions to reduce withholding, just do not overdo it, or you may owe at tax time.',
+            'Adjusting your W-4 (Steps 3 and 4b) lowers withholding and boosts each check, but aim for balance so you are not left with an April bill.',
+            'Fewer dollars withheld means a bigger check now. Claim the credits you qualify for on your W-4, while keeping enough withheld to cover your actual tax.',
+        ])],
+        ['q' => 'Is the take-home figure here legally binding?', 'a' => $pick('binding', [
+            'No, it is a careful estimate based on standard federal, ' . $name . ', and local rules. Your real check depends on your employer\'s exact payroll setup.',
+            'It is for planning, not an official figure. Expect your actual ' . $name . ' stub to land very close, with small differences from specific benefit elections.',
+            'No. Treat it as a high-accuracy estimate; the final word always comes from your employer\'s payroll and the relevant tax authorities.',
+        ])],
+        ['q' => 'What are post-tax deductions on a ' . $name . ' pay stub?', 'a' => $pick('posttax', [
+            'Post-tax items, Roth 401(k) contributions, union dues, or voluntary savings, are taken after taxes, so they reduce net pay but not your taxable income.',
+            'These come out of your pay after tax is calculated. Unlike pre-tax deductions, they do not lower what you owe the IRS or ' . $name . '.',
+            'A post-tax deduction (like a Roth contribution) trims your take-home without changing your tax bill, since it is applied once taxes are already figured.',
+        ])],
+        ['q' => 'How are overtime wages taxed in ' . $name . '?', 'a' => $pick('ot', [
+            'Overtime is taxed at the same rates as regular pay, but a bigger check can be withheld at a higher marginal rate for that period; it settles up when you file.',
+            'There is no special overtime tax. The extra earnings may push that one check into higher withholding, which evens out on your annual return.',
+            'Overtime dollars face the same brackets as normal wages. Temporary over-withholding on a large check is corrected when you file your ' . $name . ' and federal taxes.',
+        ])],
+        ['q' => 'What is the extra Medicare tax for high earners?', 'a' => $pick('addmed', [
+            'An additional 0.9% Medicare tax applies to wages above $200,000 (single) or $250,000 (married filing jointly), withheld once your year-to-date pay crosses the line.',
+            'High earners pay 0.9% more in Medicare beyond $200,000 single / $250,000 joint. Employers start withholding it automatically at that point.',
+            'Above $200,000 (or $250,000 married), an extra 0.9% Medicare surtax kicks in on the wages over the threshold.',
+        ])],
+        ['q' => 'Traditional vs. Roth 401(k), which helps my ' . $name . ' check today?', 'a' => $pick('trad', [
+            'Traditional contributions are pre-tax, so they cut today\'s withholding. Roth contributions are post-tax, no break now, but tax-free withdrawals later.',
+            'For a bigger paycheck today, traditional wins because it lowers taxable income. Roth costs more now but pays off tax-free in retirement.',
+            'Traditional 401(k) money reduces your current ' . $name . ' and federal tax; Roth does not, but its growth and withdrawals come out untaxed down the road.',
+        ])],
+        ['q' => 'My estimate is lower than my real check, why?', 'a' => $pick('lower', [
+            'Usually it is a double-entered deduction or the wrong pay frequency. Confirm your filing status matches your W-4 and that no extra local tax was applied.',
+            'Check for deductions entered twice, an incorrect pay frequency, or a local tax that does not apply to you, any of these can drag the estimate below your real pay.',
+            'The common causes are a mismatched filing status, the wrong number of pay periods, or a misplaced deduction. Re-check those inputs and the gap usually closes.',
+        ])],
+        ['q' => 'Where can I verify ' . $name . ' withholding rules officially?', 'a' => $pick('verify', [
+            'The ' . $rev . ' publishes the official ' . $name . ' tables, forms, and deadlines. For federal questions, use the IRS Tax Withholding Estimator.',
+            'Go straight to the ' . $rev . ' for state rules, and to the IRS for federal withholding guidance, both are linked in the resources section above.',
+            'Official ' . $name . ' figures come from the ' . $rev . '; the IRS handles federal brackets and the withholding estimator.',
+        ])],
+        ['q' => 'Is take-home pay different in ' . $city1 . ' than the rest of ' . $name . '?', 'a' => $pick('city', [
+            'Federal tax and FICA are identical statewide. Any difference in ' . $city1 . ' usually comes from a local city or county tax, so set your jurisdiction for accuracy.',
+            'Mostly no, the big deductions are the same across ' . $name . '. Local taxes are the exception, and where they apply (such as ' . $city1 . '), the calculator can include them.',
+            'Your federal and FICA withholding does not change by city. Only local ' . $name . ' taxes can make ' . $city1 . ' differ, so select the right locality.',
+        ])],
+        ['q' => 'Does it work for both hourly and salaried ' . $name . ' jobs?', 'a' => $pick('hourly', [
+            'Yes. Enter a salary or an hourly rate with hours worked; the tool annualizes either, applies the rules, and reports net pay per period.',
+            'Both are supported. Hourly workers add their rate and hours, salaried workers enter the annual figure, and ' . $name . ' and federal rules do the rest.',
+            'It handles either pay structure. Whether you are paid by the hour or on salary, the calculator converts it to a per-period ' . $name . ' take-home figure.',
+        ])],
+        ['q' => 'How current are the tax numbers in this calculator?', 'a' => $pick('update', [
+            'It uses 2026 federal brackets, the standard deduction, and the Social Security wage base, with ' . $name . ' rules applied as currently published.',
+            'The federal figures are the 2026 values, reviewed each year, and the ' . $name . ' state treatment reflects the latest published rates.',
+            'All federal inputs are set to 2026, and ' . $name . ' state rules are kept current, so your estimate reflects today\'s law, not last year\'s.',
+        ])],
+        ['q' => 'Can I compare a ' . $name . ' job offer against another state?', 'a' => $pick('compare', [
+            'Yes. Run the same salary here and on another state\'s calculator; because state rules differ, the net pay can vary even on an identical gross.',
+            'Definitely, that is a great use. Compare ' . $name . ' take-home with a neighbouring state to see which offer actually leaves you with more.',
+            'You can. Enter the offer here, then on the other state\'s page, the difference in net pay often reveals the better deal after taxes.',
+        ])],
     ];
 
     return usc_get_deterministic_faqs($state_slug, $faq_pool, 12);
