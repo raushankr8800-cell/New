@@ -4,7 +4,7 @@
  * — Full RankMath / Yoast compatibility
  * — JSON-LD: SoftwareApplication, FAQPage, BreadcrumbList, HowTo
  * — Canonical, og:image, og:locale, og:site_name
- * — datePublished / dateModified, aggregateRating, inLanguage
+ * — datePublished / dateModified, inLanguage
  */
 
 if (!defined('ABSPATH')) exit;
@@ -199,7 +199,7 @@ class USC_SEO {
 
         echo "\n<!-- USA State Calculators Schema -->\n";
 
-        /* 1 ── SoftwareApplication with aggregateRating + dates */
+        /* 1 ── SoftwareApplication + dates */
         if ($calc_type === 'paycheck') {
             $features = ['Salary & Hourly Wages', 'W-4 Withholding Switcher', 'FICA Deductions', 'State Tax Brackets', 'Local City/County Taxes', 'Pre-tax & Post-tax Deductions', 'Print PDF Pay Stubs'];
         } elseif ($calc_type === 'alimony') {
@@ -229,13 +229,6 @@ class USC_SEO {
                 'price'         => '0',
                 'priceCurrency' => 'USD',
                 'availability'  => 'https://schema.org/InStock',
-            ],
-            'aggregateRating' => [
-                '@type'       => 'AggregateRating',
-                'ratingValue' => '4.8',
-                'ratingCount' => '312',
-                'bestRating'  => '5',
-                'worstRating' => '1',
             ],
             'author'     => ['@type' => 'Organization', 'name' => $site_name, 'url' => home_url()],
             'publisher'  => ['@type' => 'Organization', 'name' => $site_name, 'url' => home_url()],

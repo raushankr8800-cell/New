@@ -295,7 +295,7 @@ class UST_SEO {
 
         echo "\n<!-- USA State Tax Calculators Schema -->\n";
 
-        /* 1 ── SoftwareApplication with aggregateRating */
+        /* 1 ── SoftwareApplication schema */
         if ($calc_type === 'income-tax') {
             $features = ['Federal Tax brackets calculation', 'State Tax deduction settings', 'FICA Withholdings', 'Filing Status (Single/Married/Head)', 'Pre-tax benefits splits'];
         } elseif ($calc_type === 'property-tax') {
@@ -325,13 +325,6 @@ class UST_SEO {
                 'price'         => '0',
                 'priceCurrency' => 'USD',
                 'availability'  => 'https://schema.org/InStock',
-            ],
-            'aggregateRating' => [
-                '@type'       => 'AggregateRating',
-                'ratingValue' => '4.8',
-                'ratingCount' => '186',
-                'bestRating'  => '5',
-                'worstRating' => '1',
             ],
             'author'     => ['@type' => 'Organization', 'name' => $site_name, 'url' => home_url()],
             'publisher'  => ['@type' => 'Organization', 'name' => $site_name, 'url' => home_url()],
