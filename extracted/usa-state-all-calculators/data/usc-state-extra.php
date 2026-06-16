@@ -208,3 +208,29 @@ function usc_paycheck_example($state, $gross = 85000) {
 function usc_money($n) {
     return '$' . number_format((float)$n, 2);
 }
+
+
+/**
+ * Approximate effective property-tax rate (% of home value per year) by state.
+ * Used to make the Mortgage worked example state-specific (the tax line, and
+ * therefore the total PITI, differs realistically per state). Clearly labelled
+ * as an estimate in the article.
+ */
+function usc_state_property_tax_rate($state_slug) {
+    static $r = null;
+    if ($r === null) {
+        $r = [
+            'alabama' => 0.41, 'alaska' => 1.19, 'arizona' => 0.63, 'arkansas' => 0.64, 'california' => 0.75,
+            'colorado' => 0.51, 'connecticut' => 1.96, 'delaware' => 0.58, 'florida' => 0.91, 'georgia' => 0.92,
+            'hawaii' => 0.29, 'idaho' => 0.67, 'illinois' => 2.08, 'indiana' => 0.84, 'iowa' => 1.52,
+            'kansas' => 1.41, 'kentucky' => 0.86, 'louisiana' => 0.56, 'maine' => 1.24, 'maryland' => 1.07,
+            'massachusetts' => 1.14, 'michigan' => 1.38, 'minnesota' => 1.11, 'mississippi' => 0.79, 'missouri' => 0.97,
+            'montana' => 0.83, 'nebraska' => 1.63, 'nevada' => 0.55, 'new-hampshire' => 1.93, 'new-jersey' => 2.23,
+            'new-mexico' => 0.80, 'new-york' => 1.40, 'north-carolina' => 0.82, 'north-dakota' => 0.98, 'ohio' => 1.59,
+            'oklahoma' => 0.90, 'oregon' => 0.93, 'pennsylvania' => 1.49, 'rhode-island' => 1.40, 'south-carolina' => 0.57,
+            'south-dakota' => 1.17, 'tennessee' => 0.67, 'texas' => 1.68, 'utah' => 0.57, 'vermont' => 1.83,
+            'virginia' => 0.82, 'washington' => 0.94, 'west-virginia' => 0.59, 'wisconsin' => 1.61, 'wyoming' => 0.61,
+        ];
+    }
+    return isset($r[$state_slug]) ? $r[$state_slug] : 1.0;
+}

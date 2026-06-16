@@ -1571,6 +1571,9 @@ function renderSavedMortgageScenarios() {
  * Returns default FAQs for Mortgage Calculator
  */
 function usc_get_default_mortgage_faqs($state) {
+    if (function_exists('usc_mtg_faqs_v6')) {
+        return usc_mtg_faqs_v6($state);
+    }
     $name = $state['name'];
     $state_slug = strtolower(str_replace(' ', '-', $name));
 
@@ -1713,6 +1716,9 @@ function usc_get_mortgage_variations() {
  * Returns the resolved article content for Mortgage Calculator based on state
  */
 function usc_get_default_mortgage_article_content($state) {
+    if (function_exists('usc_mtg_article_v6')) {
+        return usc_mtg_article_v6($state);
+    }
     $name = $state['name'];
     $state_slug = strtolower(str_replace(' ', '-', $name));
 

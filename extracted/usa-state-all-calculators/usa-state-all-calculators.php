@@ -41,6 +41,7 @@ require_once USC_PATH . 'data/usc-state-extra.php';
 require_once USC_PATH . 'data/usc-paycheck-v6.php';
 require_once USC_PATH . 'data/usc-childsupport-v6.php';
 require_once USC_PATH . 'data/usc-alimony-v6.php';
+require_once USC_PATH . 'data/usc-mortgage-v6.php';
 require_once USC_PATH . 'data/usc-default-templates.php';
 require_once USC_PATH . 'data/alimony.php';
 require_once USC_PATH . 'data/mortgage.php';
@@ -1196,7 +1197,7 @@ function usc_auto_generate_state_pages() {
                 foreach ($conflicting_posts as $cp) wp_delete_post($cp->ID, true);
                 $update_args['post_name'] = $new_mortgage_slug; $needs_update = true;
             }
-            if (empty($post_content) || strpos($post_content, '<!-- usc-v5-article -->') === false) {
+            if (empty($post_content) || strpos($post_content, '<!-- usc-v5-article -->') === false || strpos($post_content, '<!-- usc-mortgage-v6 -->') === false) {
                 $update_args['post_content'] = usc_get_default_mortgage_article_content($state); $needs_update = true;
                 update_post_meta($post_id, '_usc_faqs', usc_get_default_mortgage_faqs($state));
             }
