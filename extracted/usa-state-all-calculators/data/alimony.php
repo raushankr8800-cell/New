@@ -1359,6 +1359,9 @@ function renderSavedAlimonyScenarios() {
  * Returns 10 detailed FAQs for Alimony Calculator based on state
  */
 function usc_get_default_alimony_faqs($state) {
+    if (function_exists('usc_al_faqs_v6')) {
+        return usc_al_faqs_v6($state);
+    }
     $name = $state['name'];
     $state_slug = strtolower(str_replace(' ', '-', $name));
 
@@ -1450,6 +1453,9 @@ function usc_get_alimony_variations() {
  * Generates dynamic SEO article content for the Alimony Calculator
  */
 function usc_get_default_alimony_article_content($state) {
+    if (function_exists('usc_al_article_v6')) {
+        return usc_al_article_v6($state);
+    }
     $name = $state['name'];
     $state_slug = strtolower(str_replace(' ', '-', $name));
 

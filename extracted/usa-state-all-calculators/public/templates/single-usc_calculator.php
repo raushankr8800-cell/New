@@ -98,6 +98,10 @@ if ($calc_type === 'paycheck' && strpos($post_content, '<!-- usc-paycheck-v6 -->
 if ($calc_type === 'child-support' && strpos($post_content, '<!-- usc-cs-v6 -->') === false) {
     $content_outdated = true;
 }
+// Alimony pages upgrade to the V6 content engine.
+if ($calc_type === 'alimony' && strpos($post_content, '<!-- usc-alimony-v6 -->') === false) {
+    $content_outdated = true;
+}
 if ($state_info && $content_outdated) {
     if ($calc_type === 'paycheck') {
         $new_content = usc_get_default_paycheck_article_content($state_info);
@@ -114,6 +118,8 @@ if ($state_info && $content_outdated) {
         update_post_meta($post_id, '_usc_faqs', usc_get_default_paycheck_faqs($state_info));
     } elseif ($calc_type === 'child-support') {
         update_post_meta($post_id, '_usc_faqs', usc_get_default_child_support_faqs($state_info));
+    } elseif ($calc_type === 'alimony') {
+        update_post_meta($post_id, '_usc_faqs', usc_get_default_alimony_faqs($state_info));
     }
 }
 
